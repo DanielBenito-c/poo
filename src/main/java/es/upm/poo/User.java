@@ -1,23 +1,31 @@
 package es.upm.poo;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 
 public class User {
 
     private static final int MIN_AGE = 13;
-    private static final Boolean DEFAULT_IS_ACTIVE = true;
+    private static final Boolean DEFAULT_ACTIVE = true;
 
+    private Long id;
     private String name;
     private String email;
-    private Integer age;
+    private LocalDate dateOfBirth;
     private Gender gender;
-    private Boolean isActive;
+    private Boolean active;
 
-    public User(String name, String email, Integer age) {
+    public User(String name, String email, LocalDate dateOfBirth, Gender gender, Boolean active) {
         this.setName(name);
         this.setEmail(email);
-        this.setAge(age);
-        this.setActive(DEFAULT_IS_ACTIVE);
+        this.setDateOfBirth(dateOfBirth);
+        this.setGender(gender);
+        this.setActive(active);
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public void setName(String name) {
@@ -42,15 +50,19 @@ public class User {
         return this.email;
     }
 
-    public void setAge(Integer age) {
-        if (age == null || age < MIN_AGE) {
-            throw new IllegalArgumentException("age inválido: " + age);
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            throw new IllegalArgumentException("dateOfBirth inválido " + dateOfBirth);
         }
-        this.age = age;
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        if (age < MIN_AGE) {
+            throw new IllegalArgumentException("dateOfBirth inválido " + dateOfBirth);
+        }
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public Integer getAge() {
-        return this.age;
+    public LocalDate getDateOfBirth() {
+        return this.dateOfBirth;
     }
 
     public void setGender(Gender gender) {
@@ -64,12 +76,12 @@ public class User {
         return this.gender;
     }
 
-    public void setActive(Boolean isActive) {
-        this.isActive = Objects.requireNonNullElse(isActive, DEFAULT_IS_ACTIVE);
+    public void setActive(Boolean active) {
+        this.active = Objects.requireNonNullElse(active, DEFAULT_ACTIVE);
     }
 
     public Boolean isActive() {
-        return this.isActive;
+        return this.active;
     }
 
     public enum Gender {
