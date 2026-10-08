@@ -9,10 +9,11 @@ enum Gender {
 }
 
 class Consent {
+  -id : Long
   -consentDate : LocalDate
   -policyVersion : String
-  -isDataProcessingAccepted : boolean
-  -isAdvertisingAccepted : boolean
+  -DataProcessingAccepted : boolean
+  -AdvertisingAccepted : boolean
 }
 
 class User {
