@@ -1,5 +1,5 @@
 @startuml
-
+package data.models {
 enum Gender {
   MALE
   FEMALE
@@ -25,4 +25,6 @@ class User {
 }
 
 Consent "1" *--> "1" User
+}
+
 @enduml

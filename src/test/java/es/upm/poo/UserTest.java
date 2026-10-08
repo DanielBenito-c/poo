@@ -1,4 +1,4 @@
-package es.upm.poo;
+package es.upm.poo.data.model;
 
 import java.time.LocalDate;
 

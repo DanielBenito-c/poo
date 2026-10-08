@@ -1,4 +1,4 @@
-package es.upm.poo;
+package es.upm.poo.data.model;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -52,11 +52,11 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
-            throw new IllegalArgumentException("dateOfBirth inválido " + dateOfBirth);
+            throw new IllegalArgumentException("dateOfBirth inválido: " + dateOfBirth);
         }
         int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
         if (age < MIN_AGE) {
-            throw new IllegalArgumentException("dateOfBirth inválido " + dateOfBirth);
+            throw new IllegalArgumentException("dateOfBirth inválido: " + dateOfBirth);
         }
         this.dateOfBirth = dateOfBirth;
     }
