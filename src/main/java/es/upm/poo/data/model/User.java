@@ -91,4 +91,9 @@ public class User {
         OTHER,
         PREFER_NOT_TO_SAY
     }
+
+    @Override
+    public String toString() {
+        return "User{id=" + this.id + ", name=" + this.name + ", email=" + this.email + ", date of birth=" + this.dateOfBirth + ", active=" + this.active + '}';
+    }
 }
