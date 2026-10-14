@@ -1,0 +1,16 @@
+package es.upm.poo.data.repositories;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface GenericRepository<T> {
+    T create(T entity);
+
+    Optional<T> read(Long id);
+
+    T update(Long id, T entity);
+
+    void deleteById(Long id);
+
+    List<T> findAll();
+}

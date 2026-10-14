@@ -28,6 +28,10 @@ public class User {
         return this.id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name inválido: " + name);
