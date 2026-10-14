@@ -8,14 +8,6 @@ enum Gender {
   PREFER_NOT_TO_SAY
 }
 
-class Consent {
-  -id : Long
-  -consentDate : LocalDate
-  -policyVersion : String
-  -DataProcessingAccepted : boolean
-  -AdvertisingAccepted : boolean
-}
-
 class User {
   -id : Long
   -name : String
@@ -25,7 +17,6 @@ class User {
   -active : Boolean
 }
 
-Consent "1" <--* "1" User
 }
 
 @enduml
