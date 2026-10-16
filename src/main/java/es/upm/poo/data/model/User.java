@@ -1,12 +1,12 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Objects;
 
 public class User {
 
-    private static final int MIN_AGE = 13;
+    private static final int MIN_BIRTH_YEAR = 1900;
+    private static final int MAX_NAME_LENGTH = 50;
     private static final Boolean DEFAULT_ACTIVE = true;
 
     private Long id;
@@ -32,46 +32,53 @@ public class User {
         this.id = id;
     }
 
-    public void setName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("name inválido: " + name);
-        }
-        this.name = name;
-    }
-
     public String getName() {
         return this.name;
     }
 
-    public void setEmail(String email) {
-        if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("email inválido: " + email);
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name es obligatorio: " + name);
         }
-        this.email = email;
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException(
+                    "name no puede superar los " + MAX_NAME_LENGTH + " caracteres: " + name);
+        }
+        this.name = name;
     }
 
     public String getEmail() {
         return this.email;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        if (dateOfBirth == null) {
-            throw new IllegalArgumentException("dateOfBirth inválido: " + dateOfBirth);
+    public void setEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("email es obligatorio");
         }
-        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
-        if (age < MIN_AGE) {
-            throw new IllegalArgumentException("dateOfBirth inválido: " + dateOfBirth);
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("email no tiene un formato válido: " + email);
         }
-        this.dateOfBirth = dateOfBirth;
+        this.email = email;
     }
 
     public LocalDate getDateOfBirth() {
         return this.dateOfBirth;
     }
 
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            throw new IllegalArgumentException("dateOfBirth es obligatorio");
+        }
+        if (dateOfBirth.getYear() < MIN_BIRTH_YEAR) {
+            throw new IllegalArgumentException(
+                    "Indica tu año de nacimiento con un número a partir de " + MIN_BIRTH_YEAR + ": " + dateOfBirth);
+        }
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public void setGender(Gender gender) {
         if (gender == null) {
-            throw new IllegalArgumentException("gender inválido: " + gender);
+            throw new IllegalArgumentException("gender es obligatorio");
         }
         this.gender = gender;
     }
@@ -97,7 +104,24 @@ public class User {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User other)) return false;
+        return this.email.equalsIgnoreCase(other.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.email.toLowerCase().hashCode();
+    }
+
+    @Override
     public String toString() {
-        return "User{id=" + this.id + ", name=" + this.name + ", email=" + this.email + ", date of birth=" + this.dateOfBirth + ", active=" + this.active + '}';
+        return "User{id=" + this.id
+                + ", name=" + this.name
+                + ", email=" + this.email
+                + ", date of birth=" + this.dateOfBirth
+                + ", gender=" + this.gender
+                + ", active=" + this.active + '}';
     }
 }
