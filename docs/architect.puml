@@ -1,0 +1,32 @@
+@startuml
+package services {
+}
+
+package data {
+  package repositories {
+  }
+
+  package model {
+    enum Gender {
+      MALE
+      FEMALE
+      NON_BINARY
+      OTHER
+      PREFER_NOT_TO_SAY
+    }
+
+    class User {
+      -id : Long
+      -name : String
+      -email : String {unique}
+      -dateOfBirth : LocalDate
+      -gender : Gender
+      -active : Boolean
+    }
+  }
+}
+
+services --> repositories
+services ..> User
+repositories ..> User
+@enduml
