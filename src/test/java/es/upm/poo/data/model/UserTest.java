@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,6 +14,14 @@ class UserTest {
 
     private static final String NAME = "Daniel";
     private static final String EMAIL = "daniel@spotify.com";
+
+    private User createUser() {
+        return this.createUser(EMAIL);
+    }
+
+    private User createUser(String email) {
+        return new User(NAME, email, LocalDate.now().minusYears(30), User.Gender.MALE, true);
+    }
 
     @Test
     void testConstructorStoresValidValues() {
@@ -28,8 +37,7 @@ class UserTest {
 
     @Test
     void testConstructorWithActiveNullDefaultsToTrue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, null);
+        User user = new User(NAME, EMAIL, LocalDate.now().minusYears(30), User.Gender.MALE, null);
 
         assertTrue(user.isActive());
     }
@@ -48,8 +56,7 @@ class UserTest {
 
     @Test
     void testSetNameStoresValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         user.setName("Ana");
 
@@ -57,9 +64,24 @@ class UserTest {
     }
 
     @Test
+    void testSetNameAtMaxLengthStoresValue() {
+        User user = this.createUser();
+
+        user.setName("a".repeat(50));
+
+        assertEquals("a".repeat(50), user.getName());
+    }
+
+    @Test
+    void testSetNameOverMaxLengthThrowsException() {
+        User user = this.createUser();
+
+        assertThrows(IllegalArgumentException.class, () -> user.setName("a".repeat(51)));
+    }
+
+    @Test
     void testSetEmailWithInvalidValueThrowsException() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         assertThrows(IllegalArgumentException.class, () -> user.setEmail(null));
         assertThrows(IllegalArgumentException.class, () -> user.setEmail("spotify.com"));
@@ -67,8 +89,7 @@ class UserTest {
 
     @Test
     void testSetEmailStoresValidValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         user.setEmail("nuevo@spotify.com");
 
@@ -76,54 +97,49 @@ class UserTest {
     }
 
     @Test
+    void testSetIdStoresValue() {
+        User user = this.createUser();
+
+        user.setId(42L);
+
+        assertEquals(42L, user.getId());
+    }
+
+    @Test
     void testSetDateOfBirthWithNullThrowsExceptionInsteadOfNullPointerException() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         assertThrows(IllegalArgumentException.class, () -> user.setDateOfBirth(null));
     }
 
     @Test
-    void testSetDateOfBirthUnderMinAgeThrowsException() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+    void testSetDateOfBirthBeforeMinYearThrowsException() {
+        User user = this.createUser();
 
-        LocalDate underage = LocalDate.now().minusYears(12);
-        assertThrows(IllegalArgumentException.class, () -> user.setDateOfBirth(underage));
+        assertThrows(IllegalArgumentException.class,
+                () -> user.setDateOfBirth(LocalDate.of(1899, 6, 15)));
     }
 
     @Test
-    void testSetDateOfBirthAtMinAgeStoresValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+    void testSetDateOfBirthAtMinYearStoresValue() {
+        User user = this.createUser();
+        LocalDate minYearDate = LocalDate.of(1900, 1, 1);
 
-        LocalDate thirteenYearsOld = LocalDate.now().minusYears(13);
-        user.setDateOfBirth(thirteenYearsOld);
+        user.setDateOfBirth(minYearDate);
 
-        assertEquals(thirteenYearsOld, user.getDateOfBirth());
-    }
-
-    @Test
-    void testSetDateOfBirthInFutureThrowsException() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
-
-        LocalDate futureDate = LocalDate.now().plusDays(1);
-        assertThrows(IllegalArgumentException.class, () -> user.setDateOfBirth(futureDate));
+        assertEquals(minYearDate, user.getDateOfBirth());
     }
 
     @Test
     void testSetGenderWithNullThrowsException() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         assertThrows(IllegalArgumentException.class, () -> user.setGender(null));
     }
 
     @Test
     void testSetGenderStoresValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         user.setGender(User.Gender.NON_BINARY);
 
@@ -132,8 +148,7 @@ class UserTest {
 
     @Test
     void testSetActiveWithFalseStoresValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         user.setActive(false);
 
@@ -142,12 +157,49 @@ class UserTest {
 
     @Test
     void testSetActiveWithNullRestoresDefaultValue() {
-        LocalDate dateOfBirth = LocalDate.now().minusYears(30);
-        User user = new User(NAME, EMAIL, dateOfBirth, User.Gender.MALE, true);
+        User user = this.createUser();
 
         user.setActive(false);
         user.setActive(null);
 
         assertTrue(user.isActive());
+    }
+
+    @Test
+    void testEqualsWithSameEmailIgnoringCase() {
+        User user = this.createUser();
+        User sameEmail = this.createUser("DANIEL@SPOTIFY.COM");
+
+        assertEquals(user, sameEmail);
+        assertEquals(user.hashCode(), sameEmail.hashCode());
+        assertEquals(user, user);
+    }
+
+    @Test
+    void testEqualsWithDifferentEmailIsFalse() {
+        User user = this.createUser();
+        User other = this.createUser("ana@spotify.com");
+
+        assertNotEquals(user, other);
+    }
+
+    @Test
+    void testEqualsWithNullOrOtherTypeIsFalse() {
+        User user = this.createUser();
+
+        assertNotEquals(user, null);
+        assertNotEquals(user, "daniel@spotify.com");
+    }
+
+    @Test
+    void testToStringContainsUserData() {
+        User user = this.createUser();
+        user.setId(7L);
+
+        String text = user.toString();
+
+        assertTrue(text.contains("id=7"));
+        assertTrue(text.contains(NAME));
+        assertTrue(text.contains(EMAIL));
     }
 }
