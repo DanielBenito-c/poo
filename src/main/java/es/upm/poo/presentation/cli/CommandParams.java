@@ -1,5 +1,7 @@
 package es.upm.poo.presentation.cli;
 
+import es.upm.poo.data.model.User;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.function.Function;
@@ -37,6 +39,10 @@ public class CommandParams {
 
     public Boolean getBoolean(Integer index) {
         return this.getParam(index, Boolean::valueOf);
+    }
+
+    public User.Gender getGender(Integer index) {
+        return this.getParam(index, User.Gender::valueOf);
     }
 
     private <T> T getParam(Integer index, Function<String, T> converter) {
