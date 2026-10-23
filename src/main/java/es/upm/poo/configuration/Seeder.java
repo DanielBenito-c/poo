@@ -13,7 +13,7 @@ public class Seeder {
     }
 
     public void seed() {
-        this.userService.create(new User("Alice Johnson", "alice.johnson@upm.es", LocalDate.of(2007, 5, 15), User.Gender.FEMALE,true));
+        this.userService.create(new User("Alice Johnson", "alice.johnson@upm.es", LocalDate.of(2007, 5, 15), User.Gender.FEMALE,null));
         this.userService.create(new User("Marco Rossi", "marco.rossi@upm.es", LocalDate.of(2007, 1, 1), User.Gender.MALE, true));
         this.userService.create(new User("Nadia Chen", "nadia.chen@upm.es", LocalDate.of(2000, 1, 1), User.Gender.FEMALE, true));
         this.userService.create(new User("Omar Haddad", "omar.haddad@upm.es", LocalDate.of(1965, 8, 20), User.Gender.OTHER, true));
