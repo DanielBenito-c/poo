@@ -8,7 +8,7 @@ import es.upm.poo.services.UserService;
 
 import java.util.List;
 
-public class CreateUser implements Command{
+public class CreateUser implements Command {
     private final View view;
     private final UserService userService;
 
@@ -40,7 +40,7 @@ public class CreateUser implements Command{
     @Override
     public void execute(CommandParams params) {
         User newUser = new User(params.getString(0),
-                params.getString(1), params.getLocalDate(2), params.getGender(3),params.getBoolean(4));
+                params.getString(1), params.getLocalDate(2), params.getGender(3), params.getBoolean(4));
         User createdUser = this.userService.create(newUser);
         this.view.showItem(createdUser);
     }
