@@ -53,7 +53,7 @@ public class User {
 
     public void setEmail(String email) {
         if (email == null) {
-            throw new IllegalArgumentException("email es obligatorio");
+            throw new IllegalArgumentException("email es obligatorio" + null);
         }
         if (!email.contains("@")) {
             throw new IllegalArgumentException("email no tiene un formato válido: " + email);
