@@ -1,12 +1,86 @@
 @startuml
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 90
+
+package "es.upm.poo.app" as app {
+class App {
+  + {static} main(args: String[])
+}
+
+package configuration {
+  class DependencyInjector <<Singleton>> {
+    + {static} getInstance(): DependencyInjector
+    + run()
+  }
+  class Seeder {
+    + seed()
+  }
+}
+
+package presentation {
+  class ErrorHandler {
+    + handlesErrors(commandLineInterface: CommandLineInterface, view: View)
+  }
+
+  package "cli" as cli {
+    class CommandLineInterface {
+      + add(command: Command)
+      + runCommands(): boolean
+      + runCommand(scanner: Scanner): boolean
+      + help()
+    }
+    interface Command {
+      + name(): String
+      + obligatoryParams(): List<String>
+      + optionalParams(): List<String>
+      + helpMessage(): String
+      + execute(params: CommandParams)
+      + help(): String
+    }
+    class CommandParams
+
+    package "commands" as commands {
+      class CreateUser
+      class FindAllUsers
+      class Help
+      class Exit
+    }
+  }
+
+  package "view" as view {
+    class View
+    enum AnsiCode
+  }
+}
+
 package services {
+  class UserService {
+    + create(user: User): User
+    + findAll(): List<User>
+  }
 }
 
 package data {
-  package repositories {
+  package "repositories" as repositories {
+    interface GenericRepository<T> {
+      + create(entity: T): T
+      + read(id: Long): Optional<T>
+      + update(id: Long, entity: T): T
+      + deleteById(id: Long)
+      + findAll(): List<T>
+    }
+    interface UserRepository {
+      + findByEmail(email: String): Optional<User>
+    }
+
+    package "map" as map {
+      abstract class GenericRepositoryMap<T>
+      class UserRepositoryMap
+    }
   }
 
-  package model {
+  package "model" as model {
     enum Gender {
       MALE
       FEMALE
@@ -14,19 +88,57 @@ package data {
       OTHER
       PREFER_NOT_TO_SAY
     }
-
     class User {
-      -id : Long
-      -name : String
-      -email : String {unique}
-      -dateOfBirth : LocalDate
-      -gender : Gender
-      -active : Boolean
+      - id: Long
+      - name: String
+      - email: String {unique}
+      - dateOfBirth: LocalDate
+      - gender: Gender
+      - active: Boolean
     }
   }
 }
+}
 
-services --> repositories
-services ..> User
-repositories ..> User
+' Herencia e implementación
+Command <|.. CreateUser
+Command <|.. FindAllUsers
+Command <|.. Help
+Command <|.. Exit
+GenericRepository <|-- UserRepository : <<bind>> T -> User
+GenericRepository <|.. GenericRepositoryMap
+GenericRepositoryMap <|-- UserRepositoryMap
+UserRepository <|.. UserRepositoryMap
+
+' Asociaciones (atributo final)
+DependencyInjector --> ErrorHandler
+DependencyInjector --> View
+DependencyInjector --> CommandLineInterface
+DependencyInjector --> UserService
+DependencyInjector --> UserRepository
+Seeder --> UserService
+CommandLineInterface --> View
+CommandLineInterface "1" --> "0..*" Command
+Help --> CommandLineInterface
+CreateUser --> View
+CreateUser --> UserService
+FindAllUsers --> View
+FindAllUsers --> UserService
+UserService --> UserRepository
+User --> "1" Gender
+
+' Usos
+App ..> DependencyInjector
+DependencyInjector ..> Seeder
+ErrorHandler ..> CommandLineInterface
+ErrorHandler ..> View
+CommandLineInterface ..> CommandParams
+Command ..> CommandParams
+View ..> AnsiCode
+Seeder ..> User
+CreateUser ..> User
+FindAllUsers ..> User
+CommandParams ..> User
+UserService ..> User
+UserRepository ..> User
 @enduml
