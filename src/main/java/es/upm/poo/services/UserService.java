@@ -27,6 +27,10 @@ public class UserService {
         return this.userRepository.read(id);
     }
 
+    public void deleteUser(Long id) {
+        this.userRepository.deleteById(id);
+    }
+
     private void assertUniqueEmail(String email) {
         if (email != null && !this.userRepository.findByEmail(email).isEmpty()) {
             throw new ConflictException("email already exists: " + email);

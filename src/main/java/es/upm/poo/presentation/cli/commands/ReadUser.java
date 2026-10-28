@@ -20,7 +20,7 @@ public class ReadUser implements Command {
 
     @Override
     public String name() {
-        return "read-user#<id>";
+        return "read-user";
     }
 
     @Override
