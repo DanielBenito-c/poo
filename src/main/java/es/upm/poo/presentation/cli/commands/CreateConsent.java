@@ -24,7 +24,7 @@ public class CreateConsent implements Command {
 
     @Override
     public List<String> obligatoryParams() {
-        return List.of("id","source","purpose");
+        return List.of("source","purpose");
     }
 
     @Override
@@ -39,6 +39,8 @@ public class CreateConsent implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        Consent newConsent = new Consent()
+        Consent newConsent = new Consent(params.getString(0),params.getConsentPurpose(2));
+        Consent createdConsent = this.userService.create(newConsent);
+        this.view.showItem(createdConsent);
     }
 }

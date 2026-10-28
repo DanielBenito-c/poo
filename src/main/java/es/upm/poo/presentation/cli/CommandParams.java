@@ -1,5 +1,6 @@
 package es.upm.poo.presentation.cli;
 
+import es.upm.poo.data.model.Consent;
 import es.upm.poo.data.model.User;
 
 import java.math.BigDecimal;
@@ -44,6 +45,8 @@ public class CommandParams {
     public User.Gender getGender(Integer index) {
         return this.getParam(index, User.Gender::valueOf);
     }
+
+    public Consent.ConsentPurpose getConsentPurpose(Integer index) {return this.getParam(index,Consent.ConsentPurpose::valueOf);}
 
     private <T> T getParam(Integer index, Function<String, T> converter) {
         if (this.params.length <= index) {
