@@ -31,6 +31,7 @@ public class DependencyInjector {
         this.commandLineInterface.add(new FindAllUsers(this.view,this.userService));
         this.commandLineInterface.add(new ReadUser(this.view,this.userService));
         this.commandLineInterface.add(new DeleteUser(this.view,this.userService));
+        this.commandLineInterface.add(new CreateConsent(this.view,this.userService));
 
         this.errorHandler = new ErrorHandler();
     }

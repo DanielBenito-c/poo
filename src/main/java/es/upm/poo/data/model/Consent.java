@@ -11,12 +11,57 @@ public class Consent {
     private ConsentPurpose purpose;
     private LocalDateTime revokedAt;
 
+    public Consent(String source, ConsentPurpose purpose) {
+        this.source = source;
+        this.purpose = purpose;
+        this.grantedAt = LocalDateTime.now();
+    }
 
+    public Long getId() {
+        return this.id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public LocalDateTime getGrantedAt() {
+        return this.grantedAt;
+    }
 
+    public void setGrantedAt(LocalDateTime grantedAt) {
+        this.grantedAt = grantedAt;
+    }
 
+    public String getSource() {
+        return this.source;
+    }
 
+    public void setSource(String source) {
+        if (source == null) {
+            throw new IllegalArgumentException("source es obligatorio" + null);
+        }
+        this.source = source;
+    }
+
+    public ConsentPurpose getPurpose() {
+        return this.purpose;
+    }
+
+    public void setPurpose(ConsentPurpose purpose) {
+        if (purpose == null) {
+            throw new IllegalArgumentException("purpose es obligatorio" + null);
+        }
+        this.purpose = purpose;
+    }
+
+    public LocalDateTime getRevokedAt() {
+        return revokedAt;
+    }
+
+    public void setRevokedAt(LocalDateTime revokedAt) {
+        this.revokedAt = revokedAt;
+    }
 
     public enum ConsentPurpose {
         BASIC,
