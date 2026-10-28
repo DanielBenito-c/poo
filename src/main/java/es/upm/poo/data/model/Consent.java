@@ -1,6 +1,7 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Consent {
 
@@ -11,10 +12,10 @@ public class Consent {
     private ConsentPurpose purpose;
     private LocalDateTime revokedAt;
 
-    public Consent(String source, ConsentPurpose purpose) {
-        this.source = source;
-        this.purpose = purpose;
-        this.grantedAt = LocalDateTime.now();
+    public Consent(String source, ConsentPurpose purpose, LocalDateTime grantedAt) {
+        this.setSource(source);
+        this.setPurpose(purpose);
+        this.setGrantedAt(grantedAt);
     }
 
     public Long getId() {
@@ -39,7 +40,7 @@ public class Consent {
 
     public void setSource(String source) {
         if (source == null) {
-            throw new IllegalArgumentException("source es obligatorio" + null);
+            throw new IllegalArgumentException("source es obligatorio " + null);
         }
         this.source = source;
     }
@@ -50,7 +51,7 @@ public class Consent {
 
     public void setPurpose(ConsentPurpose purpose) {
         if (purpose == null) {
-            throw new IllegalArgumentException("purpose es obligatorio" + null);
+            throw new IllegalArgumentException("purpose es obligatorio " + null);
         }
         this.purpose = purpose;
     }
@@ -60,7 +61,7 @@ public class Consent {
     }
 
     public void setRevokedAt(LocalDateTime revokedAt) {
-        this.revokedAt = revokedAt;
+        this.revokedAt = Objects.requireNonNullElse(revokedAt,LocalDateTime.now());
     }
 
     public enum ConsentPurpose {

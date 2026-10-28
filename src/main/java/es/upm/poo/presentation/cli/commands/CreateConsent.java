@@ -39,7 +39,7 @@ public class CreateConsent implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        Consent newConsent = new Consent(params.getString(0),params.getConsentPurpose(2));
+        Consent newConsent = new Consent(params.getString(0),params.getConsentPurpose(1),params.getLocalDateTime(2));
         Consent createdConsent = this.userService.create(newConsent);
         this.view.showItem(createdConsent);
     }

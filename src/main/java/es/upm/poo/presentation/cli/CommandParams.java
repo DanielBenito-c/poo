@@ -5,6 +5,7 @@ import es.upm.poo.data.model.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 public class CommandParams {
@@ -37,6 +38,8 @@ public class CommandParams {
     public LocalDate getLocalDate(Integer index) {
         return this.getParam(index, LocalDate::parse); //yyyy-MM-dd
     }
+
+    public LocalDateTime getLocalDateTime(Integer index) {return this.getParam(index, LocalDateTime::parse);}
 
     public Boolean getBoolean(Integer index) {
         return this.getParam(index, Boolean::valueOf);
