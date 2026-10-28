@@ -12,7 +12,7 @@ public class Consent {
     private ConsentPurpose purpose;
     private LocalDateTime revokedAt;
 
-    public Consent(String source, ConsentPurpose purpose, LocalDateTime grantedAt) {
+    public Consent(Long userId, String source, ConsentPurpose purpose, LocalDateTime grantedAt) {
         this.setSource(source);
         this.setPurpose(purpose);
         this.setGrantedAt(grantedAt);
@@ -68,5 +68,12 @@ public class Consent {
         BASIC,
         MARKETING,
         ALL
+    }
+
+    @Override
+    public String toString() {
+        return "Consent{id=" + this.id
+                + ", source=" + this.source
+                + ", purpose=" + this.purpose + "}";
     }
 }

@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository;
-    private ConsentRepository consentRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -20,10 +19,6 @@ public class UserService {
     public User create(User user) {
         this.assertUniqueEmail(user.getEmail());
         return this.userRepository.create(user);
-    }
-
-    public Consent create(Consent consent) {
-        return this.consentRepository.create(consent);
     }
 
     public List<User> findAll() {

@@ -1,5 +1,7 @@
 package es.upm.poo.configuration;
 
+import es.upm.poo.data.repositories.ConsentRepository;
+import es.upm.poo.data.repositories.map.ConsentRepositoryMap;
 import es.upm.poo.presentation.cli.CommandLineInterface;
 import es.upm.poo.presentation.ErrorHandler;
 import es.upm.poo.presentation.cli.commands.*;
@@ -7,6 +9,7 @@ import es.upm.poo.presentation.view.View;
 import es.upm.poo.data.repositories.UserRepository;
 import es.upm.poo.data.repositories.map.UserRepositoryMap;
 import es.upm.poo.services.UserService;
+import es.upm.poo.services.ConsentService;
 
 public class DependencyInjector {
     private static final DependencyInjector instance = new DependencyInjector();
@@ -17,10 +20,14 @@ public class DependencyInjector {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ConsentService consentService;
+    private final ConsentRepository consentRepository;
 
     private DependencyInjector() {
         this.userRepository = new UserRepositoryMap();
         this.userService = new UserService(this.userRepository);
+        this.consentRepository = new ConsentRepositoryMap();
+        this.consentService = new ConsentService(this.consentRepository);
         new Seeder(this.userService).seed();
         this.view = new View();
         this.commandLineInterface = new CommandLineInterface(this.view);
@@ -31,7 +38,7 @@ public class DependencyInjector {
         this.commandLineInterface.add(new FindAllUsers(this.view,this.userService));
         this.commandLineInterface.add(new ReadUser(this.view,this.userService));
         this.commandLineInterface.add(new DeleteUser(this.view,this.userService));
-        this.commandLineInterface.add(new CreateConsent(this.view,this.userService));
+        this.commandLineInterface.add(new CreateConsent(this.view,this.consentService));
 
         this.errorHandler = new ErrorHandler();
     }
