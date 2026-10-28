@@ -5,6 +5,7 @@ import es.upm.poo.data.repositories.UserRepository;
 import es.upm.poo.services.exceptions.ConflictException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository;
@@ -22,8 +23,8 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User readUser(Long id) {
-        return this.userRepository.readUser();
+    public Optional<User> readUser(Long id) {
+        return this.userRepository.read(id);
     }
 
     private void assertUniqueEmail(String email) {
