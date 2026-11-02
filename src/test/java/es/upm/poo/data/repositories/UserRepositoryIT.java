@@ -125,6 +125,16 @@ class UserRepositoryIT {
     }
 
     @Test
+    void testFindByEmailIgnoresCase() {
+        UserRepository repository = this.createUserRepository();
+        repository.create(this.createUser(EMAIL));
+
+        User user = repository.findByEmail("DANIEL@SPOTIFY.COM").orElseThrow();
+
+        assertEquals(EMAIL, user.getEmail());
+    }
+
+    @Test
     void testFindByUnknownEmailReturnsEmpty() {
         UserRepository repository = this.createUserRepository();
 

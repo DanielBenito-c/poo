@@ -1,6 +1,7 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -173,6 +174,22 @@ class UserTest {
         assertEquals(user, sameEmail);
         assertEquals(user.hashCode(), sameEmail.hashCode());
         assertEquals(user, user);
+    }
+
+    @Test
+    void testHashCodeMatchesEqualsRegardlessOfDefaultLocale() {
+        Locale originalLocale = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+
+        try {
+            User upperCaseEmail = this.createUser("I@spotify.com");
+            User lowerCaseEmail = this.createUser("i@spotify.com");
+
+            assertEquals(upperCaseEmail, lowerCaseEmail);
+            assertEquals(upperCaseEmail.hashCode(), lowerCaseEmail.hashCode());
+        } finally {
+            Locale.setDefault(originalLocale);
+        }
     }
 
     @Test
