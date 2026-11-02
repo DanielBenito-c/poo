@@ -7,7 +7,6 @@ import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ReadUser implements Command {
     private final View view;
@@ -40,7 +39,7 @@ public class ReadUser implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        Optional<User> userFindById = this.userService.readUser(params.getLong(0));
-        this.view.showItem(userFindById);
+        User foundUser = this.userService.readUser(params.getLong(0));
+        this.view.showItem(foundUser);
     }
 }
