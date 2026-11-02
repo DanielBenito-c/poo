@@ -5,7 +5,6 @@ import es.upm.poo.presentation.cli.Command;
 import es.upm.poo.presentation.cli.CommandParams;
 import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.ConsentService;
-import es.upm.poo.services.UserService;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class CreateConsent implements Command {
 
     @Override
     public List<String> obligatoryParams() {
-        return List.of("id","source","purpose");
+        return List.of("userId","source","purpose");
     }
 
     @Override

@@ -1,18 +1,18 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
-
 public class Consent {
 
 
     private Long id;
+    private Long userId;
     private LocalDateTime grantedAt;
     private String source;
     private ConsentPurpose purpose;
     private LocalDateTime revokedAt;
 
     public Consent(Long userId, String source, ConsentPurpose purpose, LocalDateTime grantedAt) {
+        this.setUserId(userId);
         this.setSource(source);
         this.setPurpose(purpose);
         this.setGrantedAt(grantedAt);
@@ -22,8 +22,19 @@ public class Consent {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return this.userId;
+    }
+
+    public void setUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId es obligatorio: " + userId);
+        }
+        this.userId = userId;
     }
 
     public LocalDateTime getGrantedAt() {
@@ -57,11 +68,11 @@ public class Consent {
     }
 
     public LocalDateTime getRevokedAt() {
-        return revokedAt;
+        return this.revokedAt;
     }
 
     public void setRevokedAt(LocalDateTime revokedAt) {
-        this.revokedAt = Objects.requireNonNullElse(revokedAt,LocalDateTime.now());
+        this.revokedAt = revokedAt;
     }
 
     public enum ConsentPurpose {
@@ -73,6 +84,7 @@ public class Consent {
     @Override
     public String toString() {
         return "Consent{id=" + this.id
+                + ", userId=" + this.userId
                 + ", source=" + this.source
                 + ", purpose=" + this.purpose + "}";
     }
