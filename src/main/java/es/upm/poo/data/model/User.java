@@ -1,6 +1,7 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Objects;
 
 public class User {
@@ -112,7 +113,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return this.email.toLowerCase().hashCode();
+        return this.email.toLowerCase(Locale.ROOT).hashCode();
     }
 
     @Override

@@ -1,13 +1,11 @@
 package es.upm.poo.services;
 
-import es.upm.poo.data.model.Consent;
 import es.upm.poo.data.model.User;
 import es.upm.poo.data.repositories.UserRepository;
-import es.upm.poo.data.repositories.ConsentRepository;
 import es.upm.poo.services.exceptions.ConflictException;
+import es.upm.poo.services.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository;
@@ -25,8 +23,14 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public Optional<User> readUser(Long id) {
-        return this.userRepository.read(id);
+    public User readUser(Long id) {
+        return this.userRepository.read(id)
+                .orElseThrow(() -> new NotFoundException("user not found with id: " + id));
+    }
+
+    public User findUserByEmail(String email) {
+        return this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("user not found with email: " + email));
     }
 
     public void deleteUser(Long id) {
@@ -34,7 +38,7 @@ public class UserService {
     }
 
     private void assertUniqueEmail(String email) {
-        if (email != null && !this.userRepository.findByEmail(email).isEmpty()) {
+        if (email != null && this.userRepository.findByEmail(email).isPresent()) {
             throw new ConflictException("email already exists: " + email);
         }
     }

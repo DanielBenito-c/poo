@@ -19,7 +19,7 @@ public class UserRepositoryMap extends GenericRepositoryMap<User> implements Use
             return Optional.empty();
         }
         return this.findAll().stream()
-                .filter(user -> email.equals(user.getEmail()))
+                .filter(user -> email.equalsIgnoreCase(user.getEmail()))
                 .findFirst();
     }
 }
