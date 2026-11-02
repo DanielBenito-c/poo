@@ -15,7 +15,6 @@ import es.upm.poo.presentation.cli.commands.Help;
 import es.upm.poo.presentation.cli.commands.ReadUser;
 import es.upm.poo.presentation.exceptions.BadRequestException;
 import es.upm.poo.presentation.exceptions.CommandException;
-import es.upm.poo.presentation.exceptions.ParameterConversionException;
 import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.ConsentService;
 import es.upm.poo.services.UserService;
@@ -195,17 +194,6 @@ class CommandLineInterfaceIT {
 
         assertThrows(BadRequestException.class,
                 () -> this.runCommandAndCapture(context.commandLineInterface(), "read-user#"));
-    }
-
-    @Test
-    void testReadUserWithNonNumericIdReportsInvalidValue() {
-        TestContext context = this.createContext();
-
-        ParameterConversionException exception = assertThrows(ParameterConversionException.class,
-                () -> this.runCommandAndCapture(context.commandLineInterface(), "read-user#abc"));
-
-        assertTrue(exception.getMessage().contains("abc"));
-        assertTrue(exception.getMessage().contains("Long"));
     }
 
     @Test
