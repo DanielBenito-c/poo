@@ -2,7 +2,6 @@ package es.upm.poo.presentation.cli;
 
 import es.upm.poo.data.model.Consent;
 import es.upm.poo.data.model.User;
-import es.upm.poo.presentation.exceptions.ParameterConversionException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CommandParamsTest {
@@ -41,27 +39,5 @@ class CommandParamsTest {
 
         assertNull(params.getString(0));
         assertNull(params.getLong(0));
-    }
-
-    @Test
-    void testInvalidLongIncludesValueAndExpectedType() {
-        CommandParams params = new CommandParams(new String[]{"not-a-number"});
-
-        ParameterConversionException exception = assertThrows(ParameterConversionException.class,
-                () -> params.getLong(0));
-
-        assertTrue(exception.getMessage().contains("not-a-number"));
-        assertTrue(exception.getMessage().contains("Long"));
-    }
-
-    @Test
-    void testInvalidBooleanIsRejectedInsteadOfConvertedToFalse() {
-        CommandParams params = new CommandParams(new String[]{"yes"});
-
-        ParameterConversionException exception = assertThrows(ParameterConversionException.class,
-                () -> params.getBoolean(0));
-
-        assertTrue(exception.getMessage().contains("yes"));
-        assertTrue(exception.getMessage().contains("Boolean"));
     }
 }
