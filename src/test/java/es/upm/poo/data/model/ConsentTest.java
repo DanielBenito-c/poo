@@ -2,10 +2,13 @@ package es.upm.poo.data.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,42 +17,108 @@ class ConsentTest {
     private static final Long USER_ID = 12L;
     private static final String SOURCE = "registration-form";
     private static final Consent.ConsentPurpose PURPOSE = Consent.ConsentPurpose.BASIC;
-    private static final LocalDateTime GRANTED_AT = LocalDateTime.of(2026, 10, 1, 12, 30);
+
+    private User createUser() {
+        User user = new User("Daniel", "daniel@spotify.com", LocalDate.of(1990, 1, 1),
+                User.Gender.MALE, true);
+        user.setId(USER_ID);
+        return user;
+    }
 
     private Consent createConsent() {
-        return new Consent(USER_ID, SOURCE, PURPOSE, GRANTED_AT);
+        return new Consent(this.createUser(), SOURCE, PURPOSE);
     }
 
     @Test
     void testConstructorStoresConsentDataAndLeavesPersistenceIdUnset() {
-        Consent consent = this.createConsent();
+        User user = this.createUser();
+        LocalDateTime before = LocalDateTime.now();
 
+        Consent consent = new Consent(user, SOURCE, PURPOSE);
+
+        LocalDateTime after = LocalDateTime.now();
         assertNull(consent.getId());
-        assertEquals(USER_ID, consent.getUserId());
+        assertSame(user, consent.getUser());
         assertEquals(SOURCE, consent.getSource());
         assertEquals(PURPOSE, consent.getPurpose());
-        assertEquals(GRANTED_AT, consent.getGrantedAt());
+        assertFalse(consent.getGrantedAt().isBefore(before));
+        assertFalse(consent.getGrantedAt().isAfter(after));
         assertNull(consent.getRevokedAt());
     }
 
     @Test
-    void testConstructorRejectsNullUserId() {
+    void testConstructorRejectsNullUser() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Consent(null, SOURCE, PURPOSE, GRANTED_AT));
+                () -> new Consent(null, SOURCE, PURPOSE));
 
+        assertTrue(exception.getMessage().contains("user"));
         assertTrue(exception.getMessage().contains("null"));
     }
 
     @Test
     void testConstructorRejectsNullSource() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Consent(USER_ID, null, PURPOSE, GRANTED_AT));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new Consent(this.createUser(), null, PURPOSE));
+
+        assertTrue(exception.getMessage().contains("source"));
     }
 
     @Test
     void testConstructorRejectsNullPurpose() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Consent(USER_ID, SOURCE, null, GRANTED_AT));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new Consent(this.createUser(), SOURCE, null));
+
+        assertTrue(exception.getMessage().contains("purpose"));
+    }
+
+    @Test
+    void testSetUserReplacesAssociatedUser() {
+        Consent consent = this.createConsent();
+        User otherUser = this.createUser();
+        otherUser.setId(99L);
+
+        consent.setUser(otherUser);
+
+        assertSame(otherUser, consent.getUser());
+    }
+
+    @Test
+    void testSetUserWithNullThrowsException() {
+        Consent consent = this.createConsent();
+
+        assertThrows(IllegalArgumentException.class, () -> consent.setUser(null));
+    }
+
+    @Test
+    void testSetSourceStoresValue() {
+        Consent consent = this.createConsent();
+
+        consent.setSource("mobile-app");
+
+        assertEquals("mobile-app", consent.getSource());
+    }
+
+    @Test
+    void testSetSourceWithNullThrowsException() {
+        Consent consent = this.createConsent();
+
+        assertThrows(IllegalArgumentException.class, () -> consent.setSource(null));
+    }
+
+    @Test
+    void testSetPurposeStoresValue() {
+        Consent consent = this.createConsent();
+
+        consent.setPurpose(Consent.ConsentPurpose.MARKETING);
+
+        assertEquals(Consent.ConsentPurpose.MARKETING, consent.getPurpose());
+    }
+
+    @Test
+    void testSetPurposeWithNullThrowsException() {
+        Consent consent = this.createConsent();
+
+        assertThrows(IllegalArgumentException.class, () -> consent.setPurpose(null));
     }
 
     @Test
@@ -62,17 +131,15 @@ class ConsentTest {
     }
 
     @Test
-    void testSetRevokedAtStoresAndClearsTimestamp() {
+    void testSetRevokedAtStoresCurrentTimestamp() {
         Consent consent = this.createConsent();
-        LocalDateTime revokedAt = LocalDateTime.of(2026, 10, 2, 9, 0);
+        LocalDateTime before = LocalDateTime.now();
 
-        consent.setRevokedAt(revokedAt);
+        consent.setRevokedAt();
 
-        assertEquals(revokedAt, consent.getRevokedAt());
-
-        consent.setRevokedAt(null);
-
-        assertNull(consent.getRevokedAt());
+        LocalDateTime after = LocalDateTime.now();
+        assertFalse(consent.getRevokedAt().isBefore(before));
+        assertFalse(consent.getRevokedAt().isAfter(after));
     }
 
     @Test

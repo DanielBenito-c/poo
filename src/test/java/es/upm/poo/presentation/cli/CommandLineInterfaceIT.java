@@ -3,6 +3,7 @@ package es.upm.poo.presentation.cli;
 import es.upm.poo.data.model.Consent;
 import es.upm.poo.data.model.User;
 import es.upm.poo.data.repositories.ConsentRepository;
+import es.upm.poo.data.repositories.UserRepository;
 import es.upm.poo.data.repositories.map.ConsentRepositoryMap;
 import es.upm.poo.data.repositories.map.UserRepositoryMap;
 import es.upm.poo.presentation.cli.commands.CreateConsent;
@@ -18,6 +19,7 @@ import es.upm.poo.presentation.exceptions.CommandException;
 import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.ConsentService;
 import es.upm.poo.services.UserService;
+import es.upm.poo.services.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +30,8 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,9 +39,10 @@ class CommandLineInterfaceIT {
 
     private TestContext createContext() {
         View view = new View();
-        UserService userService = new UserService(new UserRepositoryMap());
+        UserRepository userRepository = new UserRepositoryMap();
+        UserService userService = new UserService(userRepository);
         ConsentRepository consentRepository = new ConsentRepositoryMap();
-        ConsentService consentService = new ConsentService(consentRepository);
+        ConsentService consentService = new ConsentService(userRepository, consentRepository);
         CommandLineInterface commandLineInterface = new CommandLineInterface(view);
         commandLineInterface.add(new Help(commandLineInterface));
         commandLineInterface.add(new Exit());
@@ -47,7 +51,7 @@ class CommandLineInterfaceIT {
         commandLineInterface.add(new ReadUser(view, userService));
         commandLineInterface.add(new FindUserByEmail(view, userService));
         commandLineInterface.add(new DeleteUser(view, userService));
-        commandLineInterface.add(new CreateConsent(view, consentService));
+        commandLineInterface.add(new CreateConsent(view, consentService, userService));
         return new TestContext(commandLineInterface, userService, consentRepository);
     }
 
@@ -121,27 +125,26 @@ class CommandLineInterfaceIT {
     }
 
     @Test
-    void testCreateConsentCommandPersistsConsentAndDisplaysIt() {
+    void testCreateConsentCommandPersistsConsentForExistingUserAndDisplaysIt() {
         TestContext context = this.createContext();
+        User user = this.createUser(context.userService());
 
         String output = this.runCommandAndCapture(context.commandLineInterface(),
-                "create-consent#17,web,BASIC,2026-10-01T12:30:00");
+                "create-consent#" + user.getId() + ",web,BASIC");
 
         Consent consent = context.consentRepository().read(1L).orElseThrow();
         assertEquals(1L, consent.getId());
-        assertEquals(17L, consent.getUserId());
-        assertTrue(output.contains("userId=17"));
+        assertSame(user, consent.getUser());
+        assertNotNull(consent.getGrantedAt());
+        assertTrue(output.contains("userId=" + user.getId()));
     }
 
     @Test
-    void testCreateConsentCommandAllowsOmittingOptionalGrantedAt() {
+    void testCreateConsentCommandRejectsUnknownUser() {
         TestContext context = this.createContext();
 
-        this.runCommandAndCapture(context.commandLineInterface(), "create-consent#17,web,BASIC");
-
-        Consent consent = context.consentRepository().read(1L).orElseThrow();
-        assertEquals(17L, consent.getUserId());
-        assertNull(consent.getGrantedAt());
+        assertThrows(NotFoundException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(), "create-consent#99,web,BASIC"));
     }
 
     @Test
@@ -153,6 +156,8 @@ class CommandLineInterfaceIT {
         assertTrue(output.contains("create-user"));
         assertTrue(output.contains("find-user-by-email"));
         assertTrue(output.contains("create-consent"));
+        assertTrue(output.contains("create-user#name,email,dateOfBirth,gender,[active]"));
+        assertTrue(output.contains("create-consent#userId,source,purpose,[grantedAt]"));
     }
 
     @Test
@@ -193,7 +198,7 @@ class CommandLineInterfaceIT {
         TestContext context = this.createContext();
 
         assertThrows(BadRequestException.class,
-                () -> this.runCommandAndCapture(context.commandLineInterface(), "read-user#"));
+                () -> this.runCommandAndCapture(context.commandLineInterface(), "create-user#Alice"));
     }
 
     @Test

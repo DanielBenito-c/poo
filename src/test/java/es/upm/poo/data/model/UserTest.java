@@ -1,7 +1,6 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDate;
-import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -167,37 +166,34 @@ class UserTest {
     }
 
     @Test
-    void testEqualsWithSameEmailIgnoringCase() {
+    void testEqualsWithSameIdIsTrueEvenWhenOtherDataDiffers() {
         User user = this.createUser();
-        User sameEmail = this.createUser("DANIEL@SPOTIFY.COM");
+        User sameId = this.createUser("ana@spotify.com");
+        user.setId(7L);
+        sameId.setId(7L);
 
-        assertEquals(user, sameEmail);
-        assertEquals(user.hashCode(), sameEmail.hashCode());
+        assertEquals(user, sameId);
+        assertEquals(user.hashCode(), sameId.hashCode());
         assertEquals(user, user);
     }
 
     @Test
-    void testHashCodeMatchesEqualsRegardlessOfDefaultLocale() {
-        Locale originalLocale = Locale.getDefault();
-        Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+    void testEqualsWithDifferentIdIsFalse() {
+        User user = this.createUser();
+        User other = this.createUser(EMAIL);
+        user.setId(7L);
+        other.setId(8L);
 
-        try {
-            User upperCaseEmail = this.createUser("I@spotify.com");
-            User lowerCaseEmail = this.createUser("i@spotify.com");
-
-            assertEquals(upperCaseEmail, lowerCaseEmail);
-            assertEquals(upperCaseEmail.hashCode(), lowerCaseEmail.hashCode());
-        } finally {
-            Locale.setDefault(originalLocale);
-        }
+        assertNotEquals(user, other);
     }
 
     @Test
-    void testEqualsWithDifferentEmailIsFalse() {
+    void testEqualsWithNullIdIsFalseForDifferentInstances() {
         User user = this.createUser();
-        User other = this.createUser("ana@spotify.com");
+        User other = this.createUser(EMAIL);
 
         assertNotEquals(user, other);
+        assertEquals(user, user);
     }
 
     @Test
