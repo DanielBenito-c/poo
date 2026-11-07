@@ -27,7 +27,7 @@ public class DependencyInjector {
         this.userRepository = new UserRepositoryMap();
         this.userService = new UserService(this.userRepository);
         this.consentRepository = new ConsentRepositoryMap();
-        this.consentService = new ConsentService(this.consentRepository);
+        this.consentService = new ConsentService(this.userRepository, this.consentRepository);
         new Seeder(this.userService).seed();
         this.view = new View();
         this.commandLineInterface = new CommandLineInterface(this.view);
@@ -39,7 +39,7 @@ public class DependencyInjector {
         this.commandLineInterface.add(new ReadUser(this.view,this.userService));
         this.commandLineInterface.add(new FindUserByEmail(this.view, this.userService));
         this.commandLineInterface.add(new DeleteUser(this.view,this.userService));
-        this.commandLineInterface.add(new CreateConsent(this.view,this.consentService));
+        this.commandLineInterface.add(new CreateConsent(this.view,this.consentService,this.userService));
 
         this.errorHandler = new ErrorHandler();
     }

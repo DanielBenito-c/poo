@@ -5,17 +5,17 @@ public class Consent {
 
 
     private Long id;
-    private Long userId;
-    private LocalDateTime grantedAt;
+    private final LocalDateTime grantedAt;
     private String source;
     private ConsentPurpose purpose;
     private LocalDateTime revokedAt;
+    private  User user;
 
-    public Consent(Long userId, String source, ConsentPurpose purpose, LocalDateTime grantedAt) {
-        this.setUserId(userId);
+    public Consent(User user, String source, ConsentPurpose purpose) {
+        this.setUser(user);
         this.setSource(source);
         this.setPurpose(purpose);
-        this.setGrantedAt(grantedAt);
+        this.grantedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -26,23 +26,19 @@ public class Consent {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return this.userId;
+    public User getUser() {
+        return this.user;
     }
 
-    public void setUserId(Long userId) {
-        if (userId == null) {
-            throw new IllegalArgumentException("userId es obligatorio: " + userId);
+    public void setUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("user es obligatorio: " + null);
         }
-        this.userId = userId;
+        this.user=user;
     }
 
     public LocalDateTime getGrantedAt() {
         return this.grantedAt;
-    }
-
-    public void setGrantedAt(LocalDateTime grantedAt) {
-        this.grantedAt = grantedAt;
     }
 
     public String getSource() {
@@ -71,8 +67,8 @@ public class Consent {
         return this.revokedAt;
     }
 
-    public void setRevokedAt(LocalDateTime revokedAt) {
-        this.revokedAt = revokedAt;
+    public void setRevokedAt() {
+        this.revokedAt = LocalDateTime.now();
     }
 
     public enum ConsentPurpose {
@@ -84,8 +80,10 @@ public class Consent {
     @Override
     public String toString() {
         return "Consent{id=" + this.id
-                + ", userId=" + this.userId
+                + ", userId=" + this.user.getId()
                 + ", source=" + this.source
-                + ", purpose=" + this.purpose + "}";
+                + ", purpose=" + this.purpose
+                + ", grantedAt=" + this.grantedAt
+                + ", revokedAt=" + this.revokedAt + "}";
     }
 }
