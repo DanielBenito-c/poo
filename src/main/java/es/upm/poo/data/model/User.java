@@ -105,17 +105,20 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User other)) return false;
-        return this.email.equalsIgnoreCase(other.email);
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof User user)) {
+            return false;
+        }
+        return this.id != null && this.id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return this.email.toLowerCase(Locale.ROOT).hashCode();
+        return Objects.hashCode(this.id);
     }
-
     @Override
     public String toString() {
         return "User{id=" + this.id
