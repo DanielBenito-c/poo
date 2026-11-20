@@ -1,0 +1,80 @@
+@startuml
+
+package data.models {
+
+    class Park {
+        -id : Long {Auto}
+        -name : String {Not Nullable}
+        -address : String {Not Nullable}
+        -openingTime : LocalTime {Not Nullable}
+        -closingTime : LocalTime {Not Nullable}
+    }
+
+    class Zone {
+        -id : Long {Auto}
+        -name : String {Not Nullable}
+        -theme : String {Not Nullable}
+    }
+
+    class Attraction {
+        -id : Long {Auto}
+        -name : String {Not Nullable}
+        -minHeightCm : Integer {Optional}
+        -capacity : Integer {Not Nullable}
+    }
+
+    class Consent {
+        -id : Long {Auto}
+        -grantedAt : LocalDateTime {Auto}
+        -source : String {Not Nullable}
+        -purpose : ConsentPurpose {Not Nullable}
+        -revokedAt : LocalDateTime {Optional}
+    }
+    enum ConsentPurpose {
+      BASIC
+      MARKETING
+      ALL
+    }
+
+    class Ticket {
+        -id : Long {Auto}
+        -ticketType : TicketType {Not Nullable}
+        -price : BigDecimal {Not Nullable}
+        -purchaseDate : LocalDate {Not Nullable}
+        -validDate : LocalDate {Not Nullable}
+    }
+
+    enum TicketType {
+      STANDARD
+      FAST_PASS
+    }
+
+
+    class User {
+      -id : Long {Auto}
+      -name : String {Not Nullable}
+      -email : String {Not Nullable, Unique}
+      -dateOfBirth : LocalDate {Not Nullable}
+      -gender : Gender {Not Nullable}
+      -active : Boolean {Auto}
+    }
+
+    enum Gender {
+      MALE
+      FEMALE
+      NON_BINARY
+      OTHER
+      PREFER_NOT_TO_SAY
+    }
+
+    Park "1" *--> "1..*" Zone : dividido
+    Zone "1" o--> "0..*" Attraction : agrupa
+
+    Ticket "1..*" --> "1" User : comprado
+    Ticket "1..*" -up-> "1..*" Park : acceso
+
+    Consent "1" o--> User : aceptado
+
+}
+
+@enduml
