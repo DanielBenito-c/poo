@@ -1,7 +1,6 @@
 package es.upm.poo.data.model;
 
 import java.time.LocalDate;
-import java.util.Locale;
 import java.util.Objects;
 
 public class User {
