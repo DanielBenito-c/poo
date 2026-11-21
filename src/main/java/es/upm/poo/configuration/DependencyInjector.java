@@ -56,7 +56,8 @@ public class DependencyInjector {
         this.attractionService = new AttractionService(this.attractionRepository, this.zoneRepository);
         this.ticketRepository = new TicketRepositoryMap();
         this.ticketService = new TicketService(this.ticketRepository, this.userRepository, this.parkRepository);
-        new Seeder(this.userService).seed();
+        new Seeder(this.userService, this.consentService, this.parkService, this.zoneService,
+                this.attractionService, this.ticketService).seed();
         this.view = new View();
         this.commandLineInterface = new CommandLineInterface(this.view);
         this.commandLineInterface.add(new Help(this.commandLineInterface));
