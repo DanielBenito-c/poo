@@ -82,6 +82,7 @@ public class DependencyInjector {
                 this.userService, this.parkService));
         this.commandLineInterface.add(new FindAllTickets(this.view, this.ticketService));
         this.commandLineInterface.add(new FindTicketsByUserParkType(this.view, this.ticketService));
+        this.commandLineInterface.add(new FindVisitsByYear(this.view, this.ticketService));
 
         this.errorHandler = new ErrorHandler();
     }

@@ -7,6 +7,9 @@ import es.upm.poo.data.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class TicketService {
 
@@ -39,6 +42,18 @@ public class TicketService {
                 .filter(ticket -> ticket.getPark() != null
                         && this.matches(ticket.getPark().getName(), normalizedParkName))
                 .filter(ticket -> ticket.getTicketType() == ticketType)
+                .toList();
+    }
+
+    public List<VisitCount> countVisitsByYear(int year) {
+        Map<String, Long> visitsByEmail = this.ticketRepository.findAll().stream()
+                .filter(ticket -> ticket.getUser() != null
+                        && ticket.getValidDate() != null
+                        && ticket.getValidDate().getYear() == year)
+                .collect(Collectors.groupingBy(ticket -> ticket.getUser().getEmail(),
+                        TreeMap::new, Collectors.counting()));
+        return visitsByEmail.entrySet().stream()
+                .map(entry -> new VisitCount(entry.getKey(), year, entry.getValue()))
                 .toList();
     }
 
