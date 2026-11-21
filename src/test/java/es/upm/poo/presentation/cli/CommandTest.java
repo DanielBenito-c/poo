@@ -69,4 +69,35 @@ class CommandTest {
 
         assertEquals("demo. description.", command.help());
     }
+
+    @Test
+    void testHelpWithOnlyOptionalParamsBracketsThem() {
+        Command command = new Command() {
+            @Override
+            public String name() {
+                return "demo";
+            }
+
+            @Override
+            public List<String> obligatoryParams() {
+                return List.of();
+            }
+
+            @Override
+            public List<String> optionalParams() {
+                return List.of("optional");
+            }
+
+            @Override
+            public String helpMessage() {
+                return "description";
+            }
+
+            @Override
+            public void execute(CommandParams params) {
+            }
+        };
+
+        assertEquals("demo#[optional]. description.", command.help());
+    }
 }

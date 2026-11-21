@@ -19,6 +19,7 @@ import es.upm.poo.presentation.exceptions.CommandException;
 import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.ConsentService;
 import es.upm.poo.services.UserService;
+import es.upm.poo.services.exceptions.ConflictException;
 import es.upm.poo.services.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -210,6 +211,55 @@ class CommandLineInterfaceIT {
                 "find-user-by-email#ALICE@UPM.ES");
 
         assertTrue(output.contains("alice@upm.es"));
+    }
+
+    @Test
+    void testCreateUserCommandRejectsDuplicatedEmail() {
+        TestContext context = this.createContext();
+        this.createUser(context.userService());
+
+        ConflictException exception = assertThrows(ConflictException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-user#Another,alice@upm.es,1996-01-01,FEMALE"));
+
+        assertTrue(exception.getMessage().contains("alice@upm.es"));
+        assertEquals(1, context.userService().findAll().size());
+    }
+
+    @Test
+    void testReadUserCommandRejectsUnknownUser() {
+        TestContext context = this.createContext();
+
+        assertThrows(NotFoundException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(), "read-user#99"));
+    }
+
+    @Test
+    void testFindUserByEmailCommandRejectsUnknownEmail() {
+        TestContext context = this.createContext();
+
+        assertThrows(NotFoundException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "find-user-by-email#unknown@upm.es"));
+    }
+
+    @Test
+    void testFindAllUsersCommandReportsNoItemsWhenEmpty() {
+        TestContext context = this.createContext();
+
+        String output = this.runCommandAndCapture(context.commandLineInterface(), "find-all-users");
+
+        assertTrue(output.contains("No items available"));
+    }
+
+    @Test
+    void testDeleteUserCommandWithUnknownIdKeepsExistingUser() {
+        TestContext context = this.createContext();
+        this.createUser(context.userService());
+
+        this.runCommandAndCapture(context.commandLineInterface(), "delete-user#99");
+
+        assertEquals(1, context.userService().findAll().size());
     }
 
     private record TestContext(CommandLineInterface commandLineInterface,

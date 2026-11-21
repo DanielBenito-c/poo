@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateParkIT {
@@ -62,6 +63,18 @@ class CreateParkIT {
         assertEquals("Zone", context.zoneRepository().read(1L).orElseThrow().getName());
         assertTrue(output.contains("name=Park"));
         assertTrue(output.contains("zones=[Zone]"));
+    }
+
+    @Test
+    void testCreateParkCommandRejectsBlankName() {
+        TestContext context = this.createContext();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-park#,Address,09:00,20:00,Zone,Theme"));
+
+        assertTrue(context.parkRepository().findAll().isEmpty());
+        assertTrue(context.zoneRepository().findAll().isEmpty());
     }
 
     @Test

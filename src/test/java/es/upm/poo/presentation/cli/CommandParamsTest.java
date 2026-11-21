@@ -9,9 +9,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CommandParamsTest {
@@ -55,5 +58,49 @@ class CommandParamsTest {
 
         assertNull(params.getString(0));
         assertNull(params.getLong(0));
+    }
+
+    @Test
+    void testAllGettersReturnNullForMissingOptionalParameter() {
+        CommandParams params = new CommandParams(new String[0]);
+
+        assertNull(params.getInteger(0));
+        assertNull(params.getDouble(0));
+        assertNull(params.getBigDecimal(0));
+        assertNull(params.getLocalDate(0));
+        assertNull(params.getLocalDateTime(0));
+        assertNull(params.getLocalTime(0));
+        assertNull(params.getBoolean(0));
+        assertNull(params.getGender(0));
+        assertNull(params.getConsentPurpose(0));
+        assertNull(params.getTicketType(0));
+    }
+
+    @Test
+    void testGetBooleanConvertsFalseValue() {
+        CommandParams params = new CommandParams(new String[]{"false"});
+
+        assertFalse(params.getBoolean(0));
+    }
+
+    @Test
+    void testGetGenderWithUnknownValueThrowsIllegalArgumentException() {
+        CommandParams params = new CommandParams(new String[]{"UNKNOWN"});
+
+        assertThrows(IllegalArgumentException.class, () -> params.getGender(0));
+    }
+
+    @Test
+    void testGetLocalDateWithInvalidValueThrowsDateTimeParseException() {
+        CommandParams params = new CommandParams(new String[]{"01/01/2026"});
+
+        assertThrows(DateTimeParseException.class, () -> params.getLocalDate(0));
+    }
+
+    @Test
+    void testGetIntegerWithInvalidValueThrowsNumberFormatException() {
+        CommandParams params = new CommandParams(new String[]{"not-a-number"});
+
+        assertThrows(NumberFormatException.class, () -> params.getInteger(0));
     }
 }

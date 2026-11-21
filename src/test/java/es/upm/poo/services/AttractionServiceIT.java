@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AttractionServiceIT {
 
@@ -33,5 +34,12 @@ class AttractionServiceIT {
         service.create(new Attraction("Carousel", null, 30));
 
         assertEquals(2, service.findAll().size());
+    }
+
+    @Test
+    void testFindAllReturnsEmptyListInitially() {
+        AttractionService service = this.createAttractionService();
+
+        assertTrue(service.findAll().isEmpty());
     }
 }

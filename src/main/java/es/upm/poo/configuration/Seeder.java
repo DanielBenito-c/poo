@@ -59,7 +59,7 @@ public class Seeder {
     }
 
     private List<Park> createParks() {
-        return List.of(
+        List<Park> parks = List.of(
                 this.registerPark(new Park("Magic Kingdom", "Orlando, Florida",
                         LocalTime.of(9, 0), LocalTime.of(22, 0), "Fantasyland", "Fantasy")),
                 this.registerPark(new Park("Epcot", "Orlando, Florida",
@@ -70,14 +70,20 @@ public class Seeder {
                         LocalTime.of(9, 30), LocalTime.of(23, 0), "Adventureland", "Pirates")),
                 this.registerPark(new Park("Warner Bros. Madrid", "San Martin de la Vega, Madrid",
                         LocalTime.of(11, 0), LocalTime.of(20, 0), "DC Super Heroes", "Superheroes")));
+        this.registerZone(parks.get(0).addZone("Tomorrowland", "Space"));
+        return parks;
     }
 
     private Park registerPark(Park park) {
         this.parkService.create(park);
         for (Zone zone : park.getZones()) {
-            this.zoneService.create(zone);
+            this.registerZone(zone);
         }
         return park;
+    }
+
+    private Zone registerZone(Zone zone) {
+        return this.zoneService.create(zone);
     }
 
     private List<Zone> collectZones(List<Park> parks) {
@@ -85,15 +91,19 @@ public class Seeder {
     }
 
     private void createAttractions(List<Zone> zones) {
-        List<Attraction> attractions = List.of(
-                this.attractionService.create(new Attraction("Space Mountain", 120, 200)),
-                this.attractionService.create(new Attraction("Frozen Ever After", null, 150)),
-                this.attractionService.create(new Attraction("Shambhala", 140, 100)),
-                this.attractionService.create(new Attraction("Pirates of the Caribbean", null, 180)),
-                this.attractionService.create(new Attraction("Batman: Arkham Asylum", 130, 90)));
-        for (int index = 0; index < attractions.size(); index++) {
-            zones.get(index).addAttraction(attractions.get(index));
-        }
+        this.addAttraction(zones.get(0), new Attraction("It's a Small World", null, 160));
+        this.addAttraction(zones.get(1), new Attraction("Space Mountain", 120, 200));
+        this.addAttraction(zones.get(1), new Attraction("Buzz Lightyear Space Ranger Spin", 100, 120));
+        this.addAttraction(zones.get(2), new Attraction("Frozen Ever After", null, 150));
+        this.addAttraction(zones.get(3), new Attraction("Shambhala", 140, 100));
+        this.addAttraction(zones.get(4), new Attraction("Pirates of the Caribbean", null, 180));
+        this.addAttraction(zones.get(5), new Attraction("Batman: Arkham Asylum", 130, 90));
+    }
+
+    private Attraction addAttraction(Zone zone, Attraction attraction) {
+        Attraction createdAttraction = this.attractionService.create(attraction);
+        zone.addAttraction(createdAttraction);
+        return createdAttraction;
     }
 
     private void createConsents(List<User> users) {

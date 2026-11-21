@@ -92,6 +92,17 @@ class CreateTicketIT {
     }
 
     @Test
+    void testCreateTicketCommandRejectsValidDateBeforePurchaseDate() {
+        TestContext context = this.createContext();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-ticket#1,1,STANDARD,50.00,2026-01-02,2026-01-01"));
+
+        assertTrue(context.ticketRepository().findAll().isEmpty());
+    }
+
+    @Test
     void testFindAllTicketsCommandDisplaysStoredTickets() {
         TestContext context = this.createContext();
         this.runCommandAndCapture(context.commandLineInterface(), COMMAND);

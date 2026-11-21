@@ -86,6 +86,29 @@ class CreateAttractionIT {
     }
 
     @Test
+    void testCreateAttractionCommandRejectsNonPositiveCapacity() {
+        TestContext context = this.createContext();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-attraction#1,Thunder,0,120"));
+
+        assertTrue(context.attractionRepository().findAll().isEmpty());
+        assertTrue(context.zoneRepository().read(1L).orElseThrow().getAttractions().isEmpty());
+    }
+
+    @Test
+    void testCreateAttractionCommandRejectsNegativeMinHeight() {
+        TestContext context = this.createContext();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-attraction#1,Thunder,50,-1"));
+
+        assertTrue(context.attractionRepository().findAll().isEmpty());
+    }
+
+    @Test
     void testFindAllAttractionsCommandDisplaysStoredAttractions() {
         TestContext context = this.createContext();
         this.runCommandAndCapture(context.commandLineInterface(), COMMAND);

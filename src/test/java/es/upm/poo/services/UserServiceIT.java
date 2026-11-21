@@ -48,6 +48,7 @@ class UserServiceIT {
                 () -> service.create(this.createUser(EMAIL)));
 
         assertTrue(exception.getMessage().contains(EMAIL));
+        assertEquals(1, service.findAll().size());
     }
 
     @Test
@@ -59,6 +60,7 @@ class UserServiceIT {
                 () -> service.create(this.createUser("DANIEL@SPOTIFY.COM")));
 
         assertTrue(exception.getMessage().contains("DANIEL@SPOTIFY.COM"));
+        assertEquals(1, service.findAll().size());
     }
 
     @Test

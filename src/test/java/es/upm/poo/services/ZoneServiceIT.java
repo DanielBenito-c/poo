@@ -39,6 +39,13 @@ class ZoneServiceIT {
     }
 
     @Test
+    void testFindAllReturnsEmptyListInitially() {
+        ZoneService service = this.createZoneService();
+
+        assertTrue(service.findAll().isEmpty());
+    }
+
+    @Test
     void testReadZoneReturnsRequestedZone() {
         ZoneService service = this.createZoneService();
         Zone expectedZone = service.create(new Zone("Aventura", "Emociones"));

@@ -74,6 +74,18 @@ class CreateZoneIT {
     }
 
     @Test
+    void testCreateZoneCommandRejectsBlankTheme() {
+        TestContext context = this.createContext();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> this.runCommandAndCapture(context.commandLineInterface(),
+                        "create-zone#1,Aventura,   "));
+
+        assertTrue(context.zoneRepository().findAll().isEmpty());
+        assertEquals(1, context.parkRepository().read(1L).orElseThrow().getZones().size());
+    }
+
+    @Test
     void testFindAllZonesCommandDisplaysStoredZones() {
         TestContext context = this.createContext();
         this.runCommandAndCapture(context.commandLineInterface(), COMMAND);

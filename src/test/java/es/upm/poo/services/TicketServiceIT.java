@@ -42,6 +42,10 @@ class TicketServiceIT {
         Ticket createdTicket = service.create(this.createTicket(user, park));
 
         assertEquals(1L, createdTicket.getId());
+        assertEquals(Ticket.TicketType.STANDARD, createdTicket.getTicketType());
+        assertEquals(new BigDecimal("50.00"), createdTicket.getPrice());
+        assertEquals(PURCHASE_DATE, createdTicket.getPurchaseDate());
+        assertEquals(VALID_DATE, createdTicket.getValidDate());
         assertSame(user, createdTicket.getUser());
         assertSame(park, createdTicket.getPark());
         assertSame(createdTicket, ticketRepository.read(1L).orElseThrow());

@@ -42,6 +42,13 @@ class ParkServiceIT {
     }
 
     @Test
+    void testFindAllReturnsEmptyListInitially() {
+        ParkService service = new ParkService(new ParkRepositoryMap());
+
+        assertTrue(service.findAll().isEmpty());
+    }
+
+    @Test
     void testReadParkReturnsRequestedPark() {
         ParkService service = new ParkService(new ParkRepositoryMap());
         Park expectedPark = service.create(this.createPark("Park"));

@@ -1,6 +1,10 @@
 package es.upm.poo.configuration;
 
+import es.upm.poo.data.model.Attraction;
+import es.upm.poo.data.model.Park;
+import es.upm.poo.data.model.Ticket;
 import es.upm.poo.data.model.User;
+import es.upm.poo.data.model.Zone;
 import es.upm.poo.data.repositories.ConsentRepository;
 import es.upm.poo.data.repositories.map.AttractionRepositoryMap;
 import es.upm.poo.data.repositories.map.ConsentRepositoryMap;
@@ -17,6 +21,7 @@ import es.upm.poo.services.ZoneService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,16 +80,83 @@ class SeederTest {
     }
 
     @Test
-    void testSeedCreatesFiveItemsPerModel() {
+    void testSeedCreatesAtLeastFiveItemsPerModel() {
         Context context = this.createContext();
 
         context.seeder().seed();
 
-        assertEquals(5, context.userService().findAll().size());
-        assertEquals(5, context.parkService().findAll().size());
-        assertEquals(5, context.zoneService().findAll().size());
-        assertEquals(5, context.attractionService().findAll().size());
-        assertEquals(5, context.consentRepository().findAll().size());
-        assertEquals(5, context.ticketService().findAll().size());
+        assertTrue(context.userService().findAll().size() >= 5);
+        assertTrue(context.parkService().findAll().size() >= 5);
+        assertTrue(context.zoneService().findAll().size() >= 5);
+        assertTrue(context.attractionService().findAll().size() >= 5);
+        assertTrue(context.consentRepository().findAll().size() >= 5);
+        assertTrue(context.ticketService().findAll().size() >= 5);
+    }
+
+    @Test
+    void testSeedCreatesParkWithSeveralZones() {
+        Context context = this.createContext();
+
+        context.seeder().seed();
+
+        Park magicKingdom = context.parkService().findAll().stream()
+                .filter(park -> "Magic Kingdom".equals(park.getName()))
+                .findFirst().orElseThrow();
+        assertEquals(2, magicKingdom.getZones().size());
+    }
+
+    @Test
+    void testSeedCreatesZoneWithSeveralAttractions() {
+        Context context = this.createContext();
+
+        context.seeder().seed();
+
+        Zone tomorrowland = context.zoneService().findAll().stream()
+                .filter(zone -> "Tomorrowland".equals(zone.getName()))
+                .findFirst().orElseThrow();
+        assertEquals(2, tomorrowland.getAttractions().size());
+    }
+
+    @Test
+    void testSeedRegistersEveryParkZoneInZoneRepository() {
+        Context context = this.createContext();
+
+        context.seeder().seed();
+
+        for (Park park : context.parkService().findAll()) {
+            for (Zone zone : park.getZones()) {
+                assertNotNull(zone.getId());
+                assertSame(zone, context.zoneService().readZone(zone.getId()));
+            }
+        }
+    }
+
+    @Test
+    void testSeedAssociatesEveryPersistedAttractionWithAZone() {
+        Context context = this.createContext();
+
+        context.seeder().seed();
+
+        var zonedAttractions = context.zoneService().findAll().stream()
+                .flatMap(zone -> zone.getAttractions().stream())
+                .toList();
+        assertEquals(context.attractionService().findAll().size(), zonedAttractions.size());
+        for (Attraction attraction : zonedAttractions) {
+            assertNotNull(attraction.getId());
+            assertTrue(context.attractionService().findAll().contains(attraction));
+        }
+    }
+
+    @Test
+    void testSeedCreatesTicketsWithPersistedUserAndPark() {
+        Context context = this.createContext();
+
+        context.seeder().seed();
+
+        for (Ticket ticket : context.ticketService().findAll()) {
+            assertNotNull(ticket.getId());
+            assertNotNull(ticket.getUser());
+            assertNotNull(ticket.getPark());
+        }
     }
 }

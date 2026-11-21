@@ -83,6 +83,9 @@ public class Ticket {
         if (purchaseDate == null) {
             throw new IllegalArgumentException("purchaseDate es obligatorio");
         }
+        if (this.validDate != null && purchaseDate.isAfter(this.validDate)) {
+            throw new IllegalArgumentException("purchaseDate no puede ser posterior a validDate: " + purchaseDate);
+        }
         this.purchaseDate = purchaseDate;
     }
 

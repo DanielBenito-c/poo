@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ConsentServiceIT {
@@ -49,5 +50,19 @@ class ConsentServiceIT {
 
         assertEquals(1L, first.getId());
         assertEquals(2L, second.getId());
+    }
+
+    @Test
+    void testCreatePreservesConsentData() {
+        ConsentService service = new ConsentService(new UserRepositoryMap(), new ConsentRepositoryMap());
+        User user = this.createUser(17L);
+        Consent consent = new Consent(user, SOURCE, Consent.ConsentPurpose.MARKETING);
+
+        Consent createdConsent = service.create(consent);
+
+        assertEquals(SOURCE, createdConsent.getSource());
+        assertEquals(Consent.ConsentPurpose.MARKETING, createdConsent.getPurpose());
+        assertSame(user, createdConsent.getUser());
+        assertNotNull(createdConsent.getGrantedAt());
     }
 }
