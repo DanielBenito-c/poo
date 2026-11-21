@@ -104,4 +104,15 @@ public class Ticket {
         STANDARD,
         FAST_PASS
     }
+
+    @Override
+    public String toString() {
+        return "Ticket{id=" + this.id
+                + ", userId=" + (this.user == null ? null : this.user.getId())
+                + ", parkId=" + (this.park == null ? null : this.park.getId())
+                + ", ticketType=" + this.ticketType
+                + ", price=" + this.price
+                + ", purchaseDate=" + this.purchaseDate
+                + ", validDate=" + this.validDate + '}';
+    }
 }

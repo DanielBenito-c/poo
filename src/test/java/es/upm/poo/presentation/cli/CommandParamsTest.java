@@ -1,6 +1,7 @@
 package es.upm.poo.presentation.cli;
 
 import es.upm.poo.data.model.Consent;
+import es.upm.poo.data.model.Ticket;
 import es.upm.poo.data.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,13 @@ class CommandParamsTest {
         assertTrue(params.getBoolean(7));
         assertEquals(User.Gender.FEMALE, params.getGender(8));
         assertEquals(Consent.ConsentPurpose.MARKETING, params.getConsentPurpose(9));
+    }
+
+    @Test
+    void testGetTicketTypeConvertsValue() {
+        CommandParams params = new CommandParams(new String[]{"FAST_PASS"});
+
+        assertEquals(Ticket.TicketType.FAST_PASS, params.getTicketType(0));
     }
 
     @Test

@@ -1,11 +1,13 @@
 package es.upm.poo.presentation.cli;
 
 import es.upm.poo.data.model.Consent;
+import es.upm.poo.data.model.Ticket;
 import es.upm.poo.data.model.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.function.Function;
 
 public class CommandParams {
@@ -41,6 +43,10 @@ public class CommandParams {
 
     public LocalDateTime getLocalDateTime(Integer index) {return this.getParam(index, LocalDateTime::parse);}
 
+    public LocalTime getLocalTime(Integer index) {
+        return this.getParam(index, LocalTime::parse);
+    }
+
     public Boolean getBoolean(Integer index) {
         return this.getParam(index, Boolean::valueOf);
     }
@@ -50,6 +56,10 @@ public class CommandParams {
     }
 
     public Consent.ConsentPurpose getConsentPurpose(Integer index) {return this.getParam(index,Consent.ConsentPurpose::valueOf);}
+
+    public Ticket.TicketType getTicketType(Integer index) {
+        return this.getParam(index, Ticket.TicketType::valueOf);
+    }
 
     private <T> T getParam(Integer index, Function<String, T> converter) {
         if (this.params.length <= index) {
