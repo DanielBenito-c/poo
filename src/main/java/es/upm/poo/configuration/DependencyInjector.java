@@ -81,6 +81,7 @@ public class DependencyInjector {
         this.commandLineInterface.add(new CreateTicket(this.view, this.ticketService,
                 this.userService, this.parkService));
         this.commandLineInterface.add(new FindAllTickets(this.view, this.ticketService));
+        this.commandLineInterface.add(new FindTicketsByUserParkType(this.view, this.ticketService));
 
         this.errorHandler = new ErrorHandler();
     }
