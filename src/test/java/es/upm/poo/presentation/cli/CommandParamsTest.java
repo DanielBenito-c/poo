@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -39,6 +40,13 @@ class CommandParamsTest {
         CommandParams params = new CommandParams(new String[]{"FAST_PASS"});
 
         assertEquals(Ticket.TicketType.FAST_PASS, params.getTicketType(0));
+    }
+
+    @Test
+    void testGetLocalTimeConvertsValue() {
+        CommandParams params = new CommandParams(new String[]{"09:30"});
+
+        assertEquals(LocalTime.of(9, 30), params.getLocalTime(0));
     }
 
     @Test

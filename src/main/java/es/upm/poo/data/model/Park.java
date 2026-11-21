@@ -81,4 +81,14 @@ public class Park {
         }
         this.closingTime = closingTime;
     }
+
+    @Override
+    public String toString() {
+        return "Park{id=" + this.id
+                + ", name=" + this.name
+                + ", address=" + this.address
+                + ", openingTime=" + this.openingTime
+                + ", closingTime=" + this.closingTime
+                + ", zones=" + this.zones.stream().map(Zone::getName).toList() + '}';
+    }
 }

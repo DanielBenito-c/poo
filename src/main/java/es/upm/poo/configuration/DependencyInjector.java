@@ -54,6 +54,8 @@ public class DependencyInjector {
         this.commandLineInterface.add(new FindUserByEmail(this.view, this.userService));
         this.commandLineInterface.add(new DeleteUser(this.view,this.userService));
         this.commandLineInterface.add(new CreateConsent(this.view,this.consentService,this.userService));
+        this.commandLineInterface.add(new CreatePark(this.view, this.parkService));
+        this.commandLineInterface.add(new FindAllParks(this.view, this.parkService));
         this.commandLineInterface.add(new CreateTicket(this.view, this.ticketService,
                 this.userService, this.parkService));
         this.commandLineInterface.add(new FindAllTickets(this.view, this.ticketService));
