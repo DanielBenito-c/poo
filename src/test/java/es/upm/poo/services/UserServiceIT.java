@@ -1,6 +1,7 @@
 package es.upm.poo.services;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import es.upm.poo.data.model.User;
 import es.upm.poo.data.repositories.map.UserRepositoryMap;
@@ -26,7 +27,11 @@ class UserServiceIT {
     }
 
     private User createUser(String email) {
-        return new User(NAME, email, LocalDate.now().minusYears(30), User.Gender.MALE, true);
+        return this.createUser(NAME, email);
+    }
+
+    private User createUser(String name, String email) {
+        return new User(name, email, LocalDate.now().minusYears(30), User.Gender.MALE, true);
     }
 
     @Test
@@ -117,6 +122,33 @@ class UserServiceIT {
         User foundUser = service.findUserByEmail("DANIEL@SPOTIFY.COM");
 
         assertSame(expectedUser, foundUser);
+    }
+
+    @Test
+    void testFindUsersByNameReturnsMatchingUsers() {
+        UserService service = this.createUserService();
+        User expectedUser = service.create(this.createUser("Daniel", EMAIL));
+        service.create(this.createUser("Laura", "laura@spotify.com"));
+
+        List<User> foundUsers = service.findUsersByName("Dan");
+
+        assertEquals(List.of(expectedUser), foundUsers);
+    }
+
+    @Test
+    void testFindUsersByNameIgnoresCase() {
+        UserService service = this.createUserService();
+        User expectedUser = service.create(this.createUser("Daniel", EMAIL));
+
+        assertEquals(List.of(expectedUser), service.findUsersByName("DAN"));
+    }
+
+    @Test
+    void testFindUsersByNameWithUnknownNameReturnsEmptyList() {
+        UserService service = this.createUserService();
+        service.create(this.createUser("Daniel", EMAIL));
+
+        assertTrue(service.findUsersByName("Laura").isEmpty());
     }
 
     @Test

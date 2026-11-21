@@ -1,6 +1,8 @@
 package es.upm.poo.data.repositories;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 import es.upm.poo.data.model.User;
 import es.upm.poo.data.repositories.map.UserRepositoryMap;
@@ -21,7 +23,11 @@ class UserRepositoryIT {
     }
 
     private User createUser(String email) {
-        return new User(NAME, email, LocalDate.now().minusYears(30), User.Gender.MALE, true);
+        return this.createUser(NAME, email);
+    }
+
+    private User createUser(String name, String email) {
+        return new User(name, email, LocalDate.now().minusYears(30), User.Gender.MALE, true);
     }
 
     @Test
@@ -147,5 +153,56 @@ class UserRepositoryIT {
         repository.create(this.createUser(EMAIL));
 
         assertTrue(repository.findByEmail(null).isEmpty());
+    }
+
+    @Test
+    void testFindByNameContainingReturnsMatchingUsers() {
+        UserRepository repository = this.createUserRepository();
+        User daniel = repository.create(this.createUser("Daniel", EMAIL));
+        repository.create(this.createUser("Laura", "laura@spotify.com"));
+
+        assertEquals(List.of(daniel), repository.findByNameContaining("Dan"));
+    }
+
+    @Test
+    void testFindByNameContainingReturnsAllUsersWithMatchingText() {
+        UserRepository repository = this.createUserRepository();
+        User alice = repository.create(this.createUser("Alice Johnson", "alice@spotify.com"));
+        User alicia = repository.create(this.createUser("Alicia Keys", "alicia@spotify.com"));
+        repository.create(this.createUser("Marco Rossi", "marco@spotify.com"));
+
+        assertEquals(Set.of(alice, alicia), Set.copyOf(repository.findByNameContaining("ali")));
+    }
+
+    @Test
+    void testFindByNameContainingIgnoresCase() {
+        UserRepository repository = this.createUserRepository();
+        User daniel = repository.create(this.createUser("Daniel", EMAIL));
+
+        assertEquals(List.of(daniel), repository.findByNameContaining("DANIEL"));
+    }
+
+    @Test
+    void testFindByNameContainingWithUnknownNameReturnsEmpty() {
+        UserRepository repository = this.createUserRepository();
+        repository.create(this.createUser("Daniel", EMAIL));
+
+        assertTrue(repository.findByNameContaining("Laura").isEmpty());
+    }
+
+    @Test
+    void testFindByNameContainingWithNullReturnsEmpty() {
+        UserRepository repository = this.createUserRepository();
+        repository.create(this.createUser("Daniel", EMAIL));
+
+        assertTrue(repository.findByNameContaining(null).isEmpty());
+    }
+
+    @Test
+    void testFindByNameContainingWithBlankReturnsEmpty() {
+        UserRepository repository = this.createUserRepository();
+        repository.create(this.createUser("Daniel", EMAIL));
+
+        assertTrue(repository.findByNameContaining("   ").isEmpty());
     }
 }
