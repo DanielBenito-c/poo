@@ -33,6 +33,10 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("user not found with email: " + email));
     }
 
+    public List<User> findUsersByName(String name) {
+        return this.userRepository.findByNameContaining(name);
+    }
+
     public void deleteUser(Long id) {
         this.userRepository.deleteById(id);
     }

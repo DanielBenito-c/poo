@@ -4,6 +4,7 @@ import es.upm.poo.data.model.User;
 import es.upm.poo.data.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class UserRepositoryMap extends GenericRepositoryMap<User> implements UserRepository {
@@ -21,6 +22,17 @@ public class UserRepositoryMap extends GenericRepositoryMap<User> implements Use
         return this.findAll().stream()
                 .filter(user -> email.equalsIgnoreCase(user.getEmail()))
                 .findFirst();
+    }
+
+    @Override
+    public List<User> findByNameContaining(String name) {
+        if (name == null || name.isBlank()) {
+            return List.of();
+        }
+        String normalizedName = name.toLowerCase(Locale.ROOT);
+        return this.findAll().stream()
+                .filter(user -> user.getName().toLowerCase(Locale.ROOT).contains(normalizedName))
+                .toList();
     }
 }
 
