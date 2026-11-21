@@ -1,50 +1,35 @@
 @startuml
 skinparam linetype ortho
 skinparam nodesep 70
-skinparam ranksep 90
+skinparam ranksep 45
 
-package "es.upm.poo.app" as app {
+package "es.upm.poo" as root {
+
 class App {
   + {static} main(args: String[])
 }
 
 package configuration {
-  class DependencyInjector <<Singleton>> {
-    + {static} getInstance(): DependencyInjector
-    + run()
-  }
-  class Seeder {
-    + seed()
-  }
 }
 
 package presentation {
-  class ErrorHandler {
-    + handlesErrors(commandLineInterface: CommandLineInterface, view: View)
+
+  class ErrorHandler
+
+  package "exceptions" as presentation_exceptions {
   }
 
   package "cli" as cli {
-    class CommandLineInterface {
-      + add(command: Command)
-      + runCommands(): boolean
-      + runCommand(scanner: Scanner): boolean
-      + help()
-    }
-    interface Command {
-      + name(): String
-      + obligatoryParams(): List<String>
-      + optionalParams(): List<String>
-      + helpMessage(): String
-      + execute(params: CommandParams)
-      + help(): String
-    }
+    class CommandLineInterface
+    interface Command
     class CommandParams
 
     package "commands" as commands {
-      class CreateUser
-      class FindAllUsers
-      class Help
-      class Exit
+      class XCommand
+      note as NC
+        XCommand = cada comando
+        (CreateUser, FindAllUsers...)
+      end note
     }
   }
 
@@ -55,38 +40,70 @@ package presentation {
 }
 
 package services {
-  class UserService {
-    + create(user: User): User
-    + findAll(): List<User>
+  class XService
+  class VisitCount <<record>>
+
+  package "exceptions" as services_exceptions {
   }
 }
 
 package data {
+
   package "repositories" as repositories {
-    interface GenericRepository<T> {
-      + create(entity: T): T
-      + read(id: Long): Optional<T>
-      + update(id: Long, entity: T): T
-      + deleteById(id: Long)
-      + findAll(): List<T>
-    }
-    interface UserRepository {
-      + findByEmail(email: String): Optional<User>
-    }
+    interface GenericRepository<T>
+    interface XRepository
+    note as N
+      X = User, Consent, Park,
+      Zone, Attraction, Ticket
+    end note
 
     package "map" as map {
       abstract class GenericRepositoryMap<T>
-      class UserRepositoryMap
+      class XRepositoryMap
     }
   }
 
   package "model" as model {
-    enum Gender {
-      MALE
-      FEMALE
-      NON_BINARY
-      OTHER
-      PREFER_NOT_TO_SAY
+    class Park {
+      - id: Long
+      - name: String
+      - address: String
+      - openingTime: LocalTime
+      - closingTime: LocalTime
+    }
+    class Zone {
+      - id: Long
+      - name: String
+      - theme: String
+    }
+    class Attraction {
+      - id: Long
+      - name: String
+      - minHeightCm: Integer
+      - capacity: Integer
+    }
+    class Ticket {
+      - id: Long
+      - ticketType: TicketType
+      - price: BigDecimal
+      - purchaseDate: LocalDate
+      - validDate: LocalDate
+    }
+    enum TicketType {
+      STANDARD
+      FAST_PASS
+    }
+    class Consent {
+      - id: Long
+      - grantedAt: LocalDateTime
+      - source: String
+      - purpose: ConsentPurpose
+      - revokedAt: LocalDateTime
+    }
+    enum ConsentPurpose {
+      BASIC
+      MARKETING
+      ALL
     }
     class User {
       - id: Long
@@ -96,49 +113,59 @@ package data {
       - gender: Gender
       - active: Boolean
     }
+    enum Gender {
+      MALE
+      FEMALE
+      NON_BINARY
+      OTHER
+      PREFER_NOT_TO_SAY
+    }
   }
 }
+
 }
 
-' Herencia e implementación
-Command <|.. CreateUser
-Command <|.. FindAllUsers
-Command <|.. Help
-Command <|.. Exit
-GenericRepository <|-- UserRepository : <<bind>> T -> User
+' ---------- Herencia e implementación ----------
+
+
+
+
+' ---------- Comandos (a nivel de paquete) ----------
+
+' ---------- Servicios, repositorios y map ----------
+GenericRepository <|-- XRepository
 GenericRepository <|.. GenericRepositoryMap
-GenericRepositoryMap <|-- UserRepositoryMap
-UserRepository <|.. UserRepositoryMap
+GenericRepositoryMap <|-- XRepositoryMap
+XRepository <|.. XRepositoryMap
+XService -down-> XRepository
+Command <|.. XCommand
+XCommand -right-> View
+XCommand -down-> XService
+NC .. XCommand
+N .. XRepository
 
-' Asociaciones (atributo final)
-DependencyInjector --> ErrorHandler
-DependencyInjector --> View
-DependencyInjector --> CommandLineInterface
-DependencyInjector --> UserService
-DependencyInjector --> UserRepository
-Seeder --> UserService
-CommandLineInterface --> View
-CommandLineInterface "1" --> "0..*" Command
-Help --> CommandLineInterface
-CreateUser --> View
-CreateUser --> UserService
-FindAllUsers --> View
-FindAllUsers --> UserService
-UserService --> UserRepository
-User --> "1" Gender
 
-' Usos
-App ..> DependencyInjector
-DependencyInjector ..> Seeder
-ErrorHandler ..> CommandLineInterface
-ErrorHandler ..> View
-CommandLineInterface ..> CommandParams
-Command ..> CommandParams
-View ..> AnsiCode
-Seeder ..> User
-CreateUser ..> User
-FindAllUsers ..> User
-CommandParams ..> User
-UserService ..> User
-UserRepository ..> User
+' ---------- Asociaciones (atributo) ----------
+CommandLineInterface -right-> View
+CommandLineInterface "1" -down-> "0..*" Command
+
+
+
+' ---------- Modelo ----------
+Park "1" *-right---> "1..*" Zone : dividido
+Zone "1" o-down-> "0..*" Attraction : agrupa
+Ticket "0..*" -up-> "1" Park : acceso
+Ticket "0..*" -down-> "1" User : comprado
+Consent "1" o-right-> "1" User : user
+Ticket -left-> TicketType
+Consent -down-> ConsentPurpose
+User -down-> Gender
+
+' ---------- Disposición (oculta) ----------
+
+CommandParams -[hidden]down- ErrorHandler
+GenericRepositoryMap -[hidden]down- Park
+View -[hidden]right- AnsiCode
+TicketType -[hidden]down- Consent
+XCommand -[hidden]down- XService
 @enduml
