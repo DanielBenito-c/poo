@@ -56,4 +56,12 @@ public class Attraction {
         }
         this.capacity = capacity;
     }
+
+    @Override
+    public String toString() {
+        return "Attraction{id=" + this.id
+                + ", name=" + this.name
+                + ", minHeightCm=" + this.minHeightCm
+                + ", capacity=" + this.capacity + '}';
+    }
 }

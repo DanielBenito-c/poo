@@ -11,7 +11,7 @@ public class Zone {
     private String name;
     private String theme;
 
-    Zone(String name, String theme) {
+    public Zone(String name, String theme) {
         this.setName(name);
         this.setTheme(theme);
     }
@@ -58,5 +58,13 @@ public class Zone {
             throw new IllegalArgumentException("theme es obligatorio");
         }
         this.theme = theme;
+    }
+
+    @Override
+    public String toString() {
+        return "Zone{id=" + this.id
+                + ", name=" + this.name
+                + ", theme=" + this.theme
+                + ", attractions=" + this.attractions.stream().map(Attraction::getName).toList() + '}';
     }
 }

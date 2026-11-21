@@ -2,9 +2,11 @@ package es.upm.poo.presentation.cli.commands;
 
 import es.upm.poo.data.model.Park;
 import es.upm.poo.data.repositories.map.ParkRepositoryMap;
+import es.upm.poo.data.repositories.map.ZoneRepositoryMap;
 import es.upm.poo.presentation.cli.CommandLineInterface;
 import es.upm.poo.presentation.view.View;
 import es.upm.poo.services.ParkService;
+import es.upm.poo.services.ZoneService;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -24,10 +26,12 @@ class CreateParkIT {
         View view = new View();
         ParkRepositoryMap parkRepository = new ParkRepositoryMap();
         ParkService parkService = new ParkService(parkRepository);
+        ZoneRepositoryMap zoneRepository = new ZoneRepositoryMap();
+        ZoneService zoneService = new ZoneService(zoneRepository, parkRepository);
         CommandLineInterface commandLineInterface = new CommandLineInterface(view);
-        commandLineInterface.add(new CreatePark(view, parkService));
+        commandLineInterface.add(new CreatePark(view, parkService, zoneService));
         commandLineInterface.add(new FindAllParks(view, parkService));
-        return new TestContext(commandLineInterface, parkRepository);
+        return new TestContext(commandLineInterface, parkRepository, zoneRepository);
     }
 
     private String runCommandAndCapture(CommandLineInterface commandLineInterface, String input) {
@@ -55,6 +59,7 @@ class CreateParkIT {
         assertEquals(LocalTime.of(9, 0), park.getOpeningTime());
         assertEquals(LocalTime.of(20, 0), park.getClosingTime());
         assertEquals("Zone", park.getZones().get(0).getName());
+        assertEquals("Zone", context.zoneRepository().read(1L).orElseThrow().getName());
         assertTrue(output.contains("name=Park"));
         assertTrue(output.contains("zones=[Zone]"));
     }
@@ -71,6 +76,7 @@ class CreateParkIT {
     }
 
     private record TestContext(CommandLineInterface commandLineInterface,
-                               ParkRepositoryMap parkRepository) {
+                               ParkRepositoryMap parkRepository,
+                               ZoneRepositoryMap zoneRepository) {
     }
 }

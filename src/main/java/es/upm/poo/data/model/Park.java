@@ -34,9 +34,10 @@ public class Park {
         return Collections.unmodifiableList(this.zones);
     }
 
-    public void addZone(String name, String theme) {
+    public Zone addZone(String name, String theme) {
         Zone zone = new Zone(name, theme);
         this.zones.add(zone);
+        return zone;
     }
 
     public String getName() {
