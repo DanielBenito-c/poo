@@ -8,6 +8,7 @@ import es.upm.poo.services.UserService;
 
 import java.util.List;
 
+
 public class ReadUser implements Command {
     private final View view;
     private final UserService userService;
