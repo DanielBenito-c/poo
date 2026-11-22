@@ -38,6 +38,9 @@ public class DeleteUser implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        this.userService.deleteUser(params.getLong(0));
+        Long id = params.getLong(0);
+        this.userService.readUser(id);
+        this.userService.deleteUser(id);
+        this.view.show("Usuario eliminado con id: " + id);
     }
 }

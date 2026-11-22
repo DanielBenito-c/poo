@@ -9,4 +9,6 @@ public interface UserRepository extends GenericRepository<User> {
     Optional<User> findByEmail(String email);
 
     List<User> findByNameContaining(String name);
+
+    List<String> findEmailsByNameContaining(String name);
 }

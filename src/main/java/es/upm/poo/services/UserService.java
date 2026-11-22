@@ -37,6 +37,10 @@ public class UserService {
         return this.userRepository.findByNameContaining(name);
     }
 
+    public List<String> findUserEmailsByName(String name) {
+        return this.userRepository.findEmailsByNameContaining(name);
+    }
+
     public void deleteUser(Long id) {
         this.userRepository.deleteById(id);
     }

@@ -34,5 +34,12 @@ public class UserRepositoryMap extends GenericRepositoryMap<User> implements Use
                 .filter(user -> user.getName().toLowerCase(Locale.ROOT).contains(normalizedName))
                 .toList();
     }
+
+    @Override
+    public List<String> findEmailsByNameContaining(String name) {
+        return this.findByNameContaining(name).stream()
+                .map(User::getEmail)
+                .toList();
+    }
 }
 

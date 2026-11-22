@@ -1,7 +1,6 @@
 package es.upm.poo.presentation.cli.commands;
 
 import es.upm.poo.data.model.Consent;
-import es.upm.poo.data.model.User;
 import es.upm.poo.presentation.cli.Command;
 import es.upm.poo.presentation.cli.CommandParams;
 import es.upm.poo.presentation.view.View;
@@ -28,12 +27,12 @@ public class CreateConsent implements Command {
 
     @Override
     public List<String> obligatoryParams() {
-        return List.of("userId","source","purpose");
+        return List.of("userId", "source", "purpose");
     }
 
     @Override
     public List<String> optionalParams() {
-        return List.of("grantedAt");
+        return List.of();
     }
 
     @Override
@@ -43,7 +42,8 @@ public class CreateConsent implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        Consent newConsent = new Consent(userService.readUser(params.getLong(0)),params.getString(1),params.getConsentPurpose(2));
+        Consent newConsent = new Consent(this.userService.readUser(params.getLong(0)),
+                params.getString(1), params.getConsentPurpose(2));
         Consent createdConsent = this.consentService.create(newConsent);
         this.view.showItem(createdConsent);
     }

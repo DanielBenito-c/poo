@@ -38,9 +38,7 @@ public class FindUsersEmailByName implements Command {
 
     @Override
     public void execute(CommandParams params) {
-        List<String> emails = this.userService.findUsersByName(params.getString(0)).stream()
-                .map(user -> user.getEmail())
-                .toList();
+        List<String> emails = this.userService.findUserEmailsByName(params.getString(0));
         this.view.showList("Emails", emails);
     }
 }

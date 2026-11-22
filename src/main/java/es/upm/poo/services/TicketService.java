@@ -6,10 +6,6 @@ import es.upm.poo.data.repositories.TicketRepository;
 import es.upm.poo.data.repositories.UserRepository;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class TicketService {
 
@@ -34,34 +30,16 @@ public class TicketService {
 
     public List<Ticket> findByUserNameAndParkNameAndTicketType(String userName, String parkName,
                                                                Ticket.TicketType ticketType) {
-        String normalizedUserName = this.normalize(userName);
-        String normalizedParkName = this.normalize(parkName);
-        return this.ticketRepository.findAll().stream()
-                .filter(ticket -> ticket.getUser() != null
-                        && this.matches(ticket.getUser().getName(), normalizedUserName))
-                .filter(ticket -> ticket.getPark() != null
-                        && this.matches(ticket.getPark().getName(), normalizedParkName))
-                .filter(ticket -> ticket.getTicketType() == ticketType)
-                .toList();
+        return this.ticketRepository.findByUserNameAndParkNameAndTicketType(
+                userName, parkName, ticketType);
     }
 
     public List<VisitCount> countVisitsByYear(int year) {
-        Map<String, Long> visitsByEmail = this.ticketRepository.findAll().stream()
-                .filter(ticket -> ticket.getUser() != null
-                        && ticket.getValidDate() != null
-                        && ticket.getValidDate().getYear() == year)
-                .collect(Collectors.groupingBy(ticket -> ticket.getUser().getEmail(),
-                        TreeMap::new, Collectors.counting()));
-        return visitsByEmail.entrySet().stream()
+        if (year < 0) {
+            throw new IllegalArgumentException("year cannot be negative: " + year);
+        }
+        return this.ticketRepository.countVisitsByYear(year).entrySet().stream()
                 .map(entry -> new VisitCount(entry.getKey(), year, entry.getValue()))
                 .toList();
-    }
-
-    private String normalize(String value) {
-        return value == null ? "" : value.toLowerCase(Locale.ROOT);
-    }
-
-    private boolean matches(String value, String normalizedExpected) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(normalizedExpected);
     }
 }
