@@ -31,13 +31,16 @@ public class TicketRepositoryMap extends GenericRepositoryMap<Ticket> implements
     }
 
     @Override
-    public Map<String, Long> countVisitsByYear(int year) {
-        return this.findAll().stream()
+    public List<String> countVisitsByYear(int year) {
+        Map<String, Long> visitsByEmail = this.findAll().stream()
                 .filter(ticket -> ticket.getUser() != null
                         && ticket.getValidDate() != null
                         && ticket.getValidDate().getYear() == year)
                 .collect(Collectors.groupingBy(ticket -> ticket.getUser().getEmail(),
                         TreeMap::new, Collectors.counting()));
+        return visitsByEmail.entrySet().stream()
+                .map(entry -> "[" + entry.getKey() + ", " + year + ", " + entry.getValue() + "]")
+                .toList();
     }
 
     private String normalize(String value) {

@@ -34,12 +34,10 @@ public class TicketService {
                 userName, parkName, ticketType);
     }
 
-    public List<VisitCount> countVisitsByYear(int year) {
+    public List<String> countVisitsByYear(int year) {
         if (year < 0) {
             throw new IllegalArgumentException("year cannot be negative: " + year);
         }
-        return this.ticketRepository.countVisitsByYear(year).entrySet().stream()
-                .map(entry -> new VisitCount(entry.getKey(), year, entry.getValue()))
-                .toList();
+        return this.ticketRepository.countVisitsByYear(year);
     }
 }

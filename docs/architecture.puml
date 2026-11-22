@@ -41,7 +41,6 @@ package presentation {
 
 package services {
   class XService
-  class VisitCount <<record>>
 
   package "exceptions" as services_exceptions {
   }
